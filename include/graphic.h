@@ -6,6 +6,21 @@
 #include <string>
 #include <utility>
 
+#define PVP_SCREEN 0
+#define PVC_SCREEN 1
+#define STATISTIC_SCREEN 2
+#define OPTION_SCREEN 3
+#define MAIN_SCREEN 4
+#define DEMO_STORY_SCREEN 5
+
+#define MAIN_HEADER 0
+#define MAIN_MENU 1
+#define STATISTIC_MENU 
+
+#define EDGES_COLOR 2
+#define PLAYER_ONE_COLOR 3
+#define PLAYER_TWO_COLOR 4
+
 const int DEFAULT_HEIGHT = 25;
 
 const int DEFAULT_WIDTH = 46;
@@ -59,21 +74,100 @@ struct rectangle {
     }
 };
 
+namespace ObjectFall {
+    struct Object {
+        std::pair <int, int> pos;
+        char icon;
+        
+        Object(int, int, char);
+        
+        void update();
+
+        std::pair <int, int> getPos() const;
+        char getIcon() const;
+    };
+
+    extern rectangle field;
+    extern std::vector <Object> object_set;
+
+    void update();
+
+    void erase(int x);
+
+    std::vector <Object> getData();
+
+    void setBound(rectangle);
+}
+
+namespace Graphic {
+    namespace Screens {
+        extern rectangle screens[6];
+        extern rectangle subscreens[3];
+        extern int currentScreen;
+        extern int currentMainPtr;
+        
+        void init();
+        void load();
+
+        void Clear(int x, int y, int h, int w);
+        void sketchScreen();
+        
+        void sketchDemoStory();
+
+        void sketchMainWindow();
+
+        void sketchGameScreen();
+        
+        void sketchStatisticScreen();
+        
+        void sketchOptionScreen();
+
+        void updateMainPtr(int x);
+    };
+    namespace Color {
+        extern int currentBackgroundColor;
+        extern int colors[2][5];
+
+        void init();
+        
+        void setCurrentBackgroundColor();
+        
+        void colorOn(int x);
+        
+        void colorOff(int x);
+        
+        void reverseColorOn(int x);
+        
+        void reverseColorOff(int x);
+        
+        void reverseOn();
+        
+        void reverseOff();
+    }
+
+
+    void init();
+
+    void load();
+
+    void update();
+}
+
 namespace GameState {
     struct PlayerState {
         int wins, loses, draws, color;
         bool isCurrentPlayer;
         rectangle screen;
-        char name[22];
         char chess;
+        std::string name;
 
         PlayerState();
 
-        void init(int x, int y, int h, int w, int _color, char _chess, char _name[22]);
+        void init(int x, int y, int h, int w, bool cur, int _color, char _chess, std::string _name);
         
         void setColor(int x);
         
-        void setName(char _name[22]);
+        void setName(string _name);
         
         void setChess(char c);
         
@@ -88,7 +182,16 @@ namespace GameState {
         void print();
     };
 
-    PlayerState player[2];
+    extern int type; // 0/1 : PVP/PVC game
+    extern int n, m; //size of play table
+    extern int winner;
+    extern pair <int, int> currentPtrPosition; //Current cursor position
+    extern std::vector < std::pair <int, int> > turnsList; //save all moves of players
+    
+    extern rectangle playWindow;
+    extern int state[111][111]; //State of match
+
+    extern PlayerState player[2];
 
     void setup(int _m = DEFAULT_HEIGHT, int _n = DEFAULT_WIDTH);
     
@@ -100,78 +203,5 @@ namespace GameState {
     
     void updateData();
 };
-
-namespace ObjectFall {
-    struct Object {
-        std::pair <int, int> pos;
-        char icon;
-        
-        Object(int, int, char);
-        
-        void update();
-
-        std::pair <int, int> getPos() const;
-        char getIcon() const;
-    };
-
-    //rectangle field;
-    //std::vector <Object> object_set;
-
-    void update();
-
-    void erase(int x);
-
-    std::vector <Object> getData();
-
-    void setBound(rectangle);
-}
-
-namespace Graphic {
-    namespace Screens {
-        //rectangle demoStoryScreen;
-        //rectangle mainScreen, headerWindow, menuWindow;
-        //rectangle statisticWindow, PvCStatisticWindow;
-        //rectangle optionMenuWindow;
-
-        //int currentScreen;
-        //int currentMainPtr;
-        
-        void init();
-        void load();
-
-        void Clear(int x, int y, int h, int w);
-        void sketchScreen();
-        
-        void sketchDemoStory();
-
-        void sketchMainScreen();
-
-        void sketchGameScreen();
-        
-        void sketchStatisticScreen();
-        
-        void sketchOptionScreen();
-
-        void updateMainPtr(int x);
-    };
-    namespace Color {
-        // 0/1 : Background color
-        // 2 : player edges color
-        // 3 : player one chess color
-        // 4 : player two chess color
-
-        void init();
-        int getCurrentBackgoundColor();
-        void colorOn(int x, int y);
-        void colorOff(int x, int y);
-    }
-
-
-    void init();
-
-    void load();
-
-    void update();
-}
 
 #endif

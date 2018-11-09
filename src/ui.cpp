@@ -1,7 +1,7 @@
 #include <ui.h>
 #include <graphic.h>
 
-//int input;
+int Ui::Input::input;
 
 void Ui::Input::read() { input = getch(); }
 

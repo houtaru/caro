@@ -9,7 +9,7 @@ void Global::load() {
 }
 
 void Global::process() {
-    Graphic::load();
+    Graphic::Screens::sketchScreen();
     while (true) {
       //  Ui::Input::read();
     //    Ui::Controler::process();

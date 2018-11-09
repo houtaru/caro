@@ -5,7 +5,7 @@
 
 namespace Ui {
     namespace Input {
-        int input;
+        extern int input;
         void read();
         
         bool isArrowKey();
