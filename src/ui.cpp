@@ -102,6 +102,7 @@ void Ui::Controler::enterKeyProcess() {
     if (Graphic::Screens::getCurrentScreen() == PVP_SCREEN) {
         if (GameState::canMove() == false) {
             GameState::updateData();
+            
             while (true) {
                 Input::read();
                 if (Input::is_R_Key()) {
@@ -115,6 +116,7 @@ void Ui::Controler::enterKeyProcess() {
             }
         } else {
             GameState::doMove();
+            
             if (GameState::haveWinner()) {
                 GameState::updateData();
                 while (true) {
@@ -168,6 +170,22 @@ void Ui::Controler::enterKeyProcess() {
 
 void Ui::Controler::backSpaceKeyProcess() {
     if (Graphic::Screens::getCurrentScreen() == PVP_SCREEN || Graphic::Screens::getCurrentScreen() == PVC_SCREEN) {
-        
+        GameState::backToMainScreen();
+        while (true) {
+            Input::read();
+            if (Input::is_C_Key()) {
+                GameState::print();
+                break;
+            }
+            if (Input::is_S_Key()) {
+                //Save game for load game later and return to main screen
+                break;
+            }
+            if (Input::is_B_Key()) {
+                //Return to main screen without saving for load game
+                //Code along with B key process
+                break;
+            }
+        }
     }
 }

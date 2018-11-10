@@ -39,13 +39,6 @@ const std::vector <std::string> statisMenu {
     " Play with Computer "
 };
 
-const std::vector < std::vector <std::string> > optionMenu {
-    {"Sound:", "On", "Off"},
-    {"Player Icon:"},
-    {"Background: ", "BLACK", "WHITE"},
-    {"Size Board:"}
-};
-
 //ObjectFall Definition
 rectangle ObjectFall::field;
 vector <ObjectFall::Object> ObjectFall::object_set;
