@@ -132,7 +132,8 @@ void Graphic::load() {
 
 void Graphic::Screens::init() {
     currentScreen = MAIN_SCREEN;
-    currentPtr[MAIN_PTR] = currentPtr[STATIS_PTR] = 0;
+    currentPtr[MAIN_PTR] = PVP_SCREEN; 
+    currentPtr[STATIS_PTR] = STATISTIC_PVP;
 
     screens[DEMO_STORY_SCREEN].set(LINES / 2 - 9, COLS / 2 - 40, 7, 70);
 
@@ -154,15 +155,15 @@ void Graphic::Screens::Clear(int x, int y, int h, int w) {
 }
 
 void Graphic::Screens::sketchScreen() {
-    if (currentScreen != OPTION_SCREEN) {
-        Clear(0, 0, LINES, COLS);
-        mvprintw(1, 1, "%d", currentPtr[MAIN_PTR]);
-    }
+    if (currentScreen != OPTION_SCREEN) Clear(0, 0, LINES, COLS);
     if (currentScreen == DEMO_STORY_SCREEN) {
         sketchDemoStory();
         sketchScreen();
     }
-    if (currentScreen == PVP_SCREEN || currentScreen == PVC_SCREEN) sketchGameScreen();
+    if (currentScreen == PVP_SCREEN || currentScreen == PVC_SCREEN) {
+        GameState::setTypeGame();
+        sketchGameScreen();
+    }
     if (currentScreen == STATISTIC_SCREEN) sketchStatisticScreen();
     //if (currentScreen == OPTION_SCREEN) sketchOptionScreen();
     if (currentScreen == MAIN_SCREEN) sketchMainWindow();

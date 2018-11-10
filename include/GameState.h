@@ -54,6 +54,8 @@ namespace GameState {
     extern PlayerState player[2];
 
     void setup(int _m = DEFAULT_HEIGHT, int _n = DEFAULT_WIDTH);
+
+    void setTypeGame();
     
     void print();
 

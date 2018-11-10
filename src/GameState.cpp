@@ -82,8 +82,6 @@ void GameState::setup(int _m, int _n) {
     reset();
 
     m = _m; n = _n; winner = -1;
-    
-    type = Graphic::Screens::currentScreen;
 
     currentPlayer = 1;
 
@@ -98,6 +96,8 @@ void GameState::setup(int _m, int _n) {
     
     player[1].init(33, 98, 13, 31, false, PLAYER_TWO_COLOR, 'O', "Second Player");
 }
+
+void GameState::setTypeGame() { type = Graphic::Screens::getCurrentScreen(); }
 
 void GameState::print() {
     rectangle ss; ss.set(1, 1, (DEFAULT_HEIGHT << 1) + 1, (DEFAULT_WIDTH << 1) + 1);
