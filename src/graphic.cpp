@@ -124,7 +124,7 @@ void Graphic::load() {
 }
 
 void Graphic::Screens::init() {
-    currentScreen = MAIN_SCREEN;
+    currentScreen = DEMO_STORY_SCREEN;
     currentPtr[MAIN_PTR] = PVP_SCREEN; 
     currentPtr[STATIS_PTR] = STATISTIC_PVP;
 
@@ -154,7 +154,7 @@ void Graphic::Screens::sketchScreen() {
         sketchScreen();
     }
     if (currentScreen == PVP_SCREEN || currentScreen == PVC_SCREEN) {
-        GameState::setTypeGame();
+        GameState::setTypeGame(currentScreen);
         sketchGameScreen();
     }
     if (currentScreen == STATISTIC_SCREEN) sketchStatisticScreen();

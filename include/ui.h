@@ -20,7 +20,7 @@ namespace Ui {
 
         bool isEnterKey();
 
-        bool isBackspaceKey();
+        bool isEscKey();        
 
         bool is_Q_Key();
         

@@ -3,7 +3,7 @@
 
 #include <ncurses.h>
 
-const std::vector < std::string > optionMenu;
+//const std::vector < std::string > optionMenu;
 
 namespace Option {
     void print();

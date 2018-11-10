@@ -18,6 +18,8 @@ bool Ui::Input::isKeyRight() { return input == KEY_RIGHT; }
 
 bool Ui::Input::isEnterKey() { return input == '\n' || input == ' '; }
 
+bool Ui::Input::isEscKey() { return input == 27; }
+
 bool Ui::Input::is_Q_Key() { return input == 'q' || input == 'Q'; }
 
 bool Ui::Input::is_Z_Key() { return input == 'z' || input == 'Z'; }

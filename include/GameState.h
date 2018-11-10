@@ -55,7 +55,21 @@ namespace GameState {
 
     void setup(int _m = DEFAULT_HEIGHT, int _n = DEFAULT_WIDTH);
 
-    void setTypeGame();
+    void setTypeGame(int x);
+
+    void setStateRow(int x);
+
+    void setStateCol(int x);
+
+    void setStateAt(int x, int y, int v);
+
+    int getTypeGame();
+
+    int getStateRow();
+
+    int getStateCol();
+
+    int getStateAt(int x, int y);
     
     void print();
 

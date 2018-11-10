@@ -85,7 +85,7 @@ void GameState::setup(int _m, int _n) {
 
     currentPlayer = 1;
 
-    for (int i = 0; i < 111; ++i) for (int j = 0; j < 111; ++j)
+    for (int i = 0; i <= m; ++i) for (int j = 0; j <= n; ++j)
         state[i][j] = 0;
     
     playWindow.set(DEFAULT_HEIGHT - m + 1, DEFAULT_WIDTH - n + 1, (m << 1) + 1, (n << 1) + 1);
@@ -97,7 +97,21 @@ void GameState::setup(int _m, int _n) {
     player[1].init(33, 98, 13, 31, false, PLAYER_TWO_COLOR, 'O', "Second Player");
 }
 
-void GameState::setTypeGame() { type = Graphic::Screens::getCurrentScreen(); }
+void GameState::setTypeGame(int x) { type = x; }
+
+void GameState::setStateRow(int x) { m = x; }
+
+void GameState::setStateCol(int x) { n = x; }
+
+void GameState::setStateAt(int x, int y, int v) { state[x][y] = v; }
+
+int GameState::getTypeGame() { return type; }
+
+int GameState::getStateRow() { return m; }
+
+int GameState::getStateCol() { return n; }
+
+int GameState::getStateAt(int x, int y) { return state[x][y]; }
 
 void GameState::print() {
     rectangle ss; ss.set(1, 1, (DEFAULT_HEIGHT << 1) + 1, (DEFAULT_WIDTH << 1) + 1);
@@ -187,7 +201,7 @@ void GameState::doMove() {
     
     turnsList.push_back({x, y});
 
-    nextTurn();
+    if (type == PVP_SCREEN) nextTurn();
 }
 
 void GameState::nextTurn() {
