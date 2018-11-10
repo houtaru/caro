@@ -15,7 +15,12 @@
 
 #define MAIN_HEADER 0
 #define MAIN_MENU 1
-#define STATISTIC_MENU 
+#define STATISTIC_MENU 2
+#define STATISTIC_PVP 3
+#define STATISTIC_PVC 4
+
+#define MAIN_PTR 0
+#define STATIS_PTR 1
 
 #define EDGES_COLOR 2
 #define PLAYER_ONE_COLOR 3
@@ -102,9 +107,9 @@ namespace ObjectFall {
 namespace Graphic {
     namespace Screens {
         extern rectangle screens[6];
-        extern rectangle subscreens[3];
+        extern rectangle subscreens[5];
         extern int currentScreen;
-        extern int currentMainPtr;
+        extern int currentPtr[2];
         
         void init();
         void load();
@@ -116,13 +121,23 @@ namespace Graphic {
 
         void sketchMainWindow();
 
-        void sketchGameScreen();
+        void sketchGameScreen(bool flag);
         
         void sketchStatisticScreen();
+
+        void sketchStatisPVPScreen();
+
+        void sketchStatisPVCScreen();
         
         void sketchOptionScreen();
 
-        void updateMainPtr(int x);
+        void updatePtr(int id, int x);
+
+        int getPtr(int id);
+
+        void updateCurrentScreen(int x);
+
+        int getCurrentScreen();
     };
     namespace Color {
         extern int currentBackgroundColor;
@@ -130,7 +145,7 @@ namespace Graphic {
 
         void init();
         
-        void setCurrentBackgroundColor();
+        void setCurrentBackgroundColor(int x);
         
         void colorOn(int x);
         
@@ -167,9 +182,11 @@ namespace GameState {
         
         void setColor(int x);
         
-        void setName(string _name);
+        void setName(std::string _name);
         
         void setChess(char c);
+
+        char getIcon() const;
         
         void doMove(int x, int y);
         
@@ -185,7 +202,8 @@ namespace GameState {
     extern int type; // 0/1 : PVP/PVC game
     extern int n, m; //size of play table
     extern int winner;
-    extern pair <int, int> currentPtrPosition; //Current cursor position
+    extern int currentPlayer;
+    extern std::pair <int, int> currentPtrPosition; //Current cursor position
     extern std::vector < std::pair <int, int> > turnsList; //save all moves of players
     
     extern rectangle playWindow;
@@ -193,15 +211,23 @@ namespace GameState {
 
     extern PlayerState player[2];
 
-    void setup(int _m = DEFAULT_HEIGHT, int _n = DEFAULT_WIDTH);
+    void setup(int _m, int _n);
     
     void print();
+
+    void Moving(int x, int y);
+
+    void doMove();
+
+    void nextTurn();
     
     bool haveWinner();
     
     bool canMove();
     
     void updateData();
+
+    void backToMainScreen();
 };
 
 #endif

@@ -20,6 +20,8 @@ namespace Ui {
 
         bool isEnterKey();
 
+        bool isBackspaceKey();
+
         bool is_Q_Key();
         
         bool is_R_Key();
@@ -40,6 +42,20 @@ namespace Ui {
     };
     namespace Controler {
         void process();
+        
+        void arrowKeyProcess();
+
+        void keyUpProcess();
+
+        void keyDownProcess();
+
+        void keyLeftProcess();
+
+        void keyRightProcess();
+        
+        void enterKeyProcess();
+
+        void backSpaceKeyProcess();
     };
 };
 
