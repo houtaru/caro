@@ -1,7 +1,8 @@
-#include "ui.h"
+#include <ui.h>
 #include <caro.h>
-#include "utils.h"
-#include "graphic.h"
+#include <utils.h>
+#include <graphic.h>
+#include <GameState.h>
 
 void Global::load() {
     Utils::Random::seed();

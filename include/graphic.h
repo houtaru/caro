@@ -6,21 +6,27 @@
 #include <string>
 #include <utility>
 
-#define PVP_SCREEN 0
-#define PVC_SCREEN 1
-#define STATISTIC_SCREEN 2
-#define OPTION_SCREEN 3
-#define MAIN_SCREEN 4
-#define DEMO_STORY_SCREEN 5
+enum SCREENS {
+    PVP_SCREEN,
+    PVC_SCREEN,
+    STATISTIC_SCREEN,
+    OPTION_SCREEN,
+    MAIN_SCREEN,
+    DEMO_STORY_SCREEN
+};
 
-#define MAIN_HEADER 0
-#define MAIN_MENU 1
-#define STATISTIC_MENU 2
-#define STATISTIC_PVP 3
-#define STATISTIC_PVC 4
+enum SUBSCREENS {
+    MAIN_HEADER,
+    MAIN_MENU,
+    STATISTIC_MENU,
+    STATISTIC_PVP,
+    STATISTIC_PVC
+};
 
-#define MAIN_PTR 0
-#define STATIS_PTR 1
+enum POINTERS {
+    MAIN_PTR,
+    STATIS_PTR
+};
 
 #define EDGES_COLOR 2
 #define PLAYER_ONE_COLOR 3
@@ -115,13 +121,14 @@ namespace Graphic {
         void load();
 
         void Clear(int x, int y, int h, int w);
+
         void sketchScreen();
         
         void sketchDemoStory();
 
         void sketchMainWindow();
 
-        void sketchGameScreen(bool flag);
+        void sketchGameScreen(bool flag = false);
         
         void sketchStatisticScreen();
 
@@ -167,67 +174,5 @@ namespace Graphic {
 
     void update();
 }
-
-namespace GameState {
-    struct PlayerState {
-        int wins, loses, draws, color;
-        bool isCurrentPlayer;
-        rectangle screen;
-        char chess;
-        std::string name;
-
-        PlayerState();
-
-        void init(int x, int y, int h, int w, bool cur, int _color, char _chess, std::string _name);
-        
-        void setColor(int x);
-        
-        void setName(std::string _name);
-        
-        void setChess(char c);
-
-        char getIcon() const;
-        
-        void doMove(int x, int y);
-        
-        void isWinner();
-        
-        void isLoser();
-        
-        void isDraw();
-        
-        void print();
-    };
-
-    extern int type; // 0/1 : PVP/PVC game
-    extern int n, m; //size of play table
-    extern int winner;
-    extern int currentPlayer;
-    extern std::pair <int, int> currentPtrPosition; //Current cursor position
-    extern std::vector < std::pair <int, int> > turnsList; //save all moves of players
-    
-    extern rectangle playWindow;
-    extern int state[111][111]; //State of match
-
-    extern PlayerState player[2];
-
-    void setup(int _m, int _n);
-    
-    void print();
-
-    void Moving(int x, int y);
-
-    void doMove();
-
-    void nextTurn();
-    
-    bool haveWinner();
-    
-    bool canMove();
-    
-    void updateData();
-
-    void backToMainScreen();
-};
 
 #endif

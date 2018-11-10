@@ -1,9 +1,10 @@
 #include <ui.h>
-#include <utils.h>
-#include <graphic.h>
-#include <algorithm>
-#include <fstream>
 #include <tuple>
+#include <fstream>
+#include <utils.h>
+#include <algorithm>
+#include <graphic.h>
+#include <GameState.h>
 
 using namespace std;
 
@@ -130,7 +131,7 @@ void Graphic::load() {
 }
 
 void Graphic::Screens::init() {
-    currentScreen = STATISTIC_MENU;
+    currentScreen = MAIN_SCREEN;
     currentPtr[MAIN_PTR] = currentPtr[1] = 0;
 
     screens[DEMO_STORY_SCREEN].set(LINES / 2 - 9, COLS / 2 - 40, 7, 70);
@@ -158,7 +159,7 @@ void Graphic::Screens::sketchScreen() {
         sketchDemoStory();
         sketchScreen();
     }
-    if (currentScreen == PVP_SCREEN || currentScreen == PVC_SCREEN) sketchGameScreen(false);
+    if (currentScreen == PVP_SCREEN || currentScreen == PVC_SCREEN) sketchGameScreen();
     if (currentScreen == STATISTIC_SCREEN) sketchStatisticScreen();
     //if (currentScreen == OPTION_SCREEN) sketchOptionScreen();
     if (currentScreen == MAIN_SCREEN) sketchMainWindow();
@@ -224,7 +225,7 @@ void Graphic::Screens::sketchMainWindow() {
     }
 }
 
-void Graphic::Screens::sketchGameScreen(bool flag = false) {
+void Graphic::Screens::sketchGameScreen(bool flag) {
     if (!flag) {
         GameState::print();
     } else {
@@ -311,7 +312,10 @@ void Graphic::Screens::sketchStatisPVPScreen() {
     }
 }
 
-void Graphic::Screens::updateCurrentScreen(int x) { currentScreen = x; }
+void Graphic::Screens::updateCurrentScreen(int x) { 
+    currentScreen = x; 
+    sketchScreen();
+}
 
 void Graphic::Screens::updatePtr(int id, int x) {
     if (id == MAIN_PTR) {
@@ -370,254 +374,3 @@ void Graphic::Color::reverseOff() {
 
 void Graphic::Color::setCurrentBackgroundColor(int x) { currentBackgroundColor = x; }
 
-
-// Player State Definition
-GameState::PlayerState::PlayerState(): wins(0), loses(0), draws(0), isCurrentPlayer(false) {}
-
-void GameState::PlayerState::init(int x, int y, int h, int w, bool cur, int _color, char _chess, string _name) {
-    screen.set(x, y, h, w);
-    wins = loses = draws = 0;
-    isCurrentPlayer = cur;
-    color = _color;
-    chess = _chess;
-    name = _name;
-}
-
-void GameState::PlayerState::setColor(int x) { color = x; }
-
-void GameState::PlayerState::setName(string _name) { name = _name; }
-
-void GameState::PlayerState::setChess(char c) { chess = c; }
-
-char GameState::PlayerState::getIcon() const { return chess; }
-
-void GameState::PlayerState::doMove(int x, int y) {
-    Graphic::Color::reverseColorOn(color);
-    mvaddch(x, y, chess);
-    Graphic::Color::reverseColorOn(color);
-}
-
-void GameState::PlayerState::isWinner() { wins++; }
-
-void GameState::PlayerState::isLoser() { loses++; }
-
-void GameState::PlayerState::isDraw() { draws++; }
-
-void GameState::PlayerState::print() {
-    Graphic::Screens::Clear(screen.top(), screen.left(), screen.height(), screen.width());
-    if (isCurrentPlayer) {
-        Graphic::Color::colorOn(EDGES_COLOR);
-    }
-    screen.drawEdges();
-    if (isCurrentPlayer) {
-        Graphic::Color::colorOff(EDGES_COLOR);
-    }
-
-    mvaddstr(screen.top() + 3, screen.left() + 2, name.c_str());
-    mvprintw(screen.top() + 5, screen.left() + 2, "Win:         %d", wins);
-    mvprintw(screen.top() + 7, screen.left() + 2, "Total:       %d ", wins + loses + draws);
-    mvprintw(screen.top() + 9, screen.left() + 2, "Percent win: %.1f", (!wins && !loses) ? 0: wins * 100.0 / (wins + loses));
-}
-
-//Game State Variables
-int GameState::type; // 0/1 : PVP/PVC game
-
-int GameState::n, GameState::m; //size of play table
-
-int GameState::winner;
-
-pair <int, int> GameState::currentPtrPosition; //Current cursor position
-
-vector < pair <int, int> > GameState::turnsList; //save all moves of players
-
-rectangle GameState::playWindow;
-
-int GameState::state[111][111]; //State of match
-
-int GameState::currentPlayer;
-
-GameState::PlayerState GameState::player[2];
-
-void GameState::setup(int _m = DEFAULT_HEIGHT, int _n = DEFAULT_WIDTH) {
-    m = _m; n = _n; winner = -1;
-    
-    type = Graphic::Screens::currentScreen;
-
-    for (int i = 0; i < 111; ++i) for (int j = 0; j < 111; ++j)
-        state[i][j] = 0;
-    
-    playWindow.set(DEFAULT_HEIGHT - m + 1, DEFAULT_WIDTH - n + 1, (m << 1) + 1, (n << 1) + 1);
-    
-    currentPtrPosition = {playWindow.top() + 1 + m - m % 2, playWindow.left() + 1 + n - n % 2};
-
-    player[0].init(5, 98, 13, 31, true, PLAYER_ONE_COLOR, 'X', "First Player");
-    
-    player[1].init(33, 98, 13, 31, false, PLAYER_TWO_COLOR, 'O', "Second Player");
-}
-
-void GameState::print() {
-    rectangle ss; ss.set(1, 1, (DEFAULT_HEIGHT << 1) + 1, (DEFAULT_WIDTH << 1) + 1);
-    ss.drawEdges();
-    playWindow.drawTable();
-    player[0].print();
-
-    if (type == PVP_SCREEN) {
-        player[1].print();
-    }
-
-    for (int i = 1; i <= m; ++i) for (int j = 1; j <= n; ++j) {
-        int x = playWindow.top() + 1 + 2 * (i - 1), y = playWindow.left() + 1 +  2 * (j - 1);
-        
-        if (currentPtrPosition.first == x && currentPtrPosition.second == y) {
-            if (state[i][j]) Graphic::Color::reverseColorOn(state[i][j] + 1);
-            else Graphic::Color::reverseOn();
-        }
-        
-        if (state[i][j]) mvaddch(x, y, state[i][j] == 1 ? 'X' : 'O');
-        else mvaddch(x, y, ' ');
-        
-        if (currentPtrPosition.first == x && currentPtrPosition.second == y) {
-            if (state[i][j]) Graphic::Color::reverseColorOff(state[i][j] + 1);
-            else Graphic::Color::reverseOff();
-        }
-    }
-}
-
-void GameState::Moving(int x, int y) {
-    int xx = currentPtrPosition.first / 2, yy = currentPtrPosition.second / 2;
-    
-    if (state[xx][yy]) {
-        Graphic::Color::colorOn(2 + state[xx][yy]);
-        
-        mvaddch(currentPtrPosition.first, currentPtrPosition.second, player[state[xx][yy] - 1].getIcon());
-        
-        Graphic::Color::colorOff(2 + state[xx][yy]);
-    } else {
-        mvaddch(currentPtrPosition.first, currentPtrPosition.second, ' ');
-    }
-    
-    currentPtrPosition.first += x << 2; 
-    
-    currentPtrPosition.first = max(currentPtrPosition.first, playWindow.top() + 1);
-    
-    currentPtrPosition.first = min(currentPtrPosition.first, playWindow.bottom() - 1);
-    
-    currentPtrPosition.second += y << 2;
-    
-    currentPtrPosition.second = max(currentPtrPosition.second, playWindow.left() + 1);
-    
-    currentPtrPosition.second = min(currentPtrPosition.second, playWindow.right() - 1);
-
-    if (state[xx][yy]) {
-        Graphic::Color::reverseColorOn(2 + state[xx][yy]);
-        
-        mvaddch(currentPtrPosition.first, currentPtrPosition.second, player[state[xx][yy] - 1].getIcon());
-        
-        Graphic::Color::reverseColorOff(2 + state[xx][yy]);
-    } else {
-        Graphic::Color::reverseOn();
-        mvaddch(currentPtrPosition.first, currentPtrPosition.second, ' ');
-        Graphic::Color::reverseOff();
-    }
-}
-
-void GameState::doMove() {
-    int x = currentPtrPosition.first / 2, y = currentPtrPosition.second / 2;
-    state[x][y] = currentPlayer;
-    Graphic::Color::reverseColorOn(2 + state[x][y]);
-    
-    mvaddch(currentPtrPosition.first, currentPtrPosition.second, player[state[x][y] - 1].getIcon());
-    
-    Graphic::Color::reverseColorOff(2 + state[x][y]);
-}
-
-void GameState::nextTurn() { currentPlayer = 3 - currentPlayer; }
-
-bool GameState::haveWinner() {
-    for (int i = 1; i <= m; ++i) for (int j = 1; j <= n; ++j) if (state[i][j]) {
-        if (i + 4 <= m) {
-            int cnt = 1; for (int k = 1; k <= 4; ++k) cnt += state[i][j] == state[i + k][j];
-            if (cnt == 5) {
-                winner = state[i][j];
-                return true;
-            }
-        }
-        if (j + 4 <= n) {
-            int cnt = 1; for (int k = 1; k <= 4; ++k) cnt += state[i][j] == state[i][j + k];
-            if (cnt == 5) {
-                winner = state[i][j];
-                return true;
-            }
-        }
-        if (i + 4 <= m && j + 4 <= n) {
-            int cnt = 1; for (int k = 1; k <= 4; ++k) cnt += state[i][j] == state[i + k][j + k];
-            if (cnt == 5) {
-                winner = state[i][j];
-                return true;
-            }
-        }
-        if (i + 4 <= m && j - 4 > 0) {
-            int cnt = 1; for (int k = 1; k <= 4; ++k) cnt += state[i][j] == state[i + k][j - k];
-            if (cnt == 5) {
-                winner = state[i][j];
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-bool GameState::canMove() {
-    for (int i = 1; i <= m; ++i) for (int j = 1; j <= n; ++j)
-        if (state[i][j] == 0) return true;
-    return false;
-}
-
-void GameState::updateData() {
-    if (winner != -1) {
-        player[winner - 1].isWinner();
-        if (type == PVP_SCREEN) player[2 - winner].isLoser();
-    } else {
-        player[0].isDraw();
-        player[1].isDraw();
-    }
-    Graphic::Screens::Clear(playWindow.height() / 2 - 2, playWindow.width() / 2 - 20, 3, 40);
-    attron(A_BOLD | A_BLINK);
-    if (type == PVP_SCREEN) {
-        if (winner == -1)
-            mvprintw(playWindow.height() / 2 - 1, playWindow.width() / 2 - 15, "PLAYER %s WIN! PRESS R TO REPLAY!", player[winner - 1].name);
-        else
-            mvprintw(playWindow.height() / 2 - 1, playWindow.width() / 2 - 12, "DRAW! PRESS R TO REPLAY!");
-    } else {
-        if (winner == 1)
-            mvprintw(playWindow.height() / 2 - 1, playWindow.width() / 2 - 15, "YOU WIN! PRESS R TO REPLAY!");
-        else if (winner != -1)
-            mvprintw(playWindow.height() / 2 - 1, playWindow.width() / 2 - 15, "YOU LOSE! PRESS R TO REPLAY!");
-        else {
-            mvprintw(playWindow.height() / 2 - 1, playWindow.width() / 2 - 12, "DRAW! PRESS R TO REPLAY!");
-        }
-    }
-    attroff(A_BOLD | A_BLINK);   
-}
-
-void GameState::backToMainScreen() {
-    Graphic::Screens::Clear(playWindow.height() / 2 - 2, playWindow.width() / 2 - 30, 3, 60);
-    
-    attron(A_BOLD);
-    
-    mvprintw(playWindow.height() / 2 - 1, playWindow.width() / 2 - 15, "Continue         Save         Back");
-    
-    Graphic::Color::reverseOn();
-    
-    mvaddch(playWindow.height() / 2 - 1, playWindow.width() / 2 - 15, 'C');
-    
-    mvaddch(playWindow.height() / 2 - 1, playWindow.width() / 2 - 15 + 17, 'S');
-    
-    mvaddch(playWindow.height() / 2 - 1, playWindow.width() / 2 - 15 + 30, 'B');
-    
-    Graphic::Color::reverseOff();
-    
-    attroff(A_BOLD);
-    
-    refresh();
-}
