@@ -98,8 +98,7 @@ void Ui::Controler::enterKeyProcess() {
     if (Graphic::Screens::getCurrentScreen() == MAIN_SCREEN) {
         Graphic::Screens::updateCurrentScreen(Graphic::Screens::getPtr(MAIN_PTR));
         //Graphic::Screens::sketchScreen();
-    }
-    if (Graphic::Screens::getCurrentScreen() == PVP_SCREEN) {
+    } else if (Graphic::Screens::getCurrentScreen() == PVP_SCREEN) {
         if (GameState::canMove() == false) {
             GameState::updateData();
             while (true) {
@@ -136,8 +135,7 @@ void Ui::Controler::enterKeyProcess() {
                 }
             }
         }
-    }
-    if (Graphic::Screens::getCurrentScreen() == PVC_SCREEN) {
+    } else if (Graphic::Screens::getCurrentScreen() == PVC_SCREEN) {
         if (GameState::canMove() == false) {
             GameState::updateData();
             while (true) {
@@ -155,15 +153,14 @@ void Ui::Controler::enterKeyProcess() {
             GameState::doMove();
         }
         //GameState::Machine::doMove();
-    }
-    if (Graphic::Screens::getCurrentScreen() == STATISTIC_SCREEN) {
+    } else if (Graphic::Screens::getCurrentScreen() == STATISTIC_SCREEN) {
         if (Graphic::Screens::getPtr(STATIS_PTR) + 3 == STATISTIC_PVP) {
             Graphic::Screens::sketchStatisPVPScreen();
         } else {
             //Graphic::Screens::sketchStatisPVCScreen();
         }
     }
-    //Remember to add usere interface to option screen function 
+    //Remember to add user interface to option screen function 
 }
 
 void Ui::Controler::backSpaceKeyProcess() {

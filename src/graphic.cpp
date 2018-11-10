@@ -132,7 +132,7 @@ void Graphic::load() {
 
 void Graphic::Screens::init() {
     currentScreen = MAIN_SCREEN;
-    currentPtr[MAIN_PTR] = currentPtr[1] = 0;
+    currentPtr[MAIN_PTR] = currentPtr[STATIS_PTR] = 0;
 
     screens[DEMO_STORY_SCREEN].set(LINES / 2 - 9, COLS / 2 - 40, 7, 70);
 
@@ -154,7 +154,10 @@ void Graphic::Screens::Clear(int x, int y, int h, int w) {
 }
 
 void Graphic::Screens::sketchScreen() {
-    if (currentScreen != OPTION_SCREEN) Clear(0, 0, LINES, COLS);
+    if (currentScreen != OPTION_SCREEN) {
+        Clear(0, 0, LINES, COLS);
+        mvprintw(1, 1, "%d", currentPtr[MAIN_PTR]);
+    }
     if (currentScreen == DEMO_STORY_SCREEN) {
         sketchDemoStory();
         sketchScreen();
@@ -313,7 +316,7 @@ void Graphic::Screens::sketchStatisPVPScreen() {
 }
 
 void Graphic::Screens::updateCurrentScreen(int x) { 
-    currentScreen = x; 
+    currentScreen = x;
     sketchScreen();
 }
 
