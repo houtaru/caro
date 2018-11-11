@@ -22,16 +22,32 @@
  *  + state: game board of the match
  * */
 
+#include <tuple>
+#include <vector>
+#include <string>
+
 namespace Data {
-    void savedGame(bool flag = true);
+    namespace Save {
+        void savedGame(bool flag = true);
 
-    bool canLoadGame(int flag); // 0 : PVP; 1 : PVC
+        bool canLoadGame(int flag); // 0 : PVP; 1 : PVC
 
-    void loadGame(int flag); // 0 : PVP; 1 : PVC
+        void loadGame(int flag); // 0 : PVP; 1 : PVC
+    }
 
-    void gameStatis(int flag); // 0 : PVP; 1 : PVC
+    namespace Statis {
+        extern std::vector < std::tuple <std::string, std::string, int, int, std::string> > list;
 
-    void loadStatis(int flag); // 0 : PVP; 1 : PVC
+        void saveGame(int flag); // 0 : PVP; 1 : PVC
+
+        void loadStatis(int flag); // 0 : PVP; 1 : PVC
+
+        int getStatisSize();
+
+        std::string getStatisName(int i);
+
+        void getState(int i);
+    }
 };
 
 #endif

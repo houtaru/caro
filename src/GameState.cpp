@@ -24,6 +24,12 @@ void GameState::PlayerState::setChess(char c) { chess = c; }
 
 char GameState::PlayerState::getIcon() const { return chess; }
 
+std::string GameState::PlayerState::getName() { return name; }
+
+int GameState::getPosOx() { return playWindow.top(); }
+
+int GameState::getPosOy() { return playWindow.left(); }
+
 void GameState::PlayerState::doMove(int x, int y) {
     attron(A_BOLD);
     Graphic::Color::reverseColorOn(color);
@@ -57,6 +63,10 @@ void GameState::PlayerState::printProfile() {
     mvprintw(screen.top() + 5, screen.left() + 2, "Win:         %d", wins);
     mvprintw(screen.top() + 7, screen.left() + 2, "Total:       %d ", wins + loses + draws);
     mvprintw(screen.top() + 9, screen.left() + 2, "Percent win: %.1f", (!wins && !loses) ? 0: wins * 100.0 / (wins + loses));
+}
+
+void GameState::PlayerState::resetProfile() {
+    wins = loses = draws = 0;
 }
 
 //Game State Variables
@@ -105,6 +115,10 @@ void GameState::setStateCol(int x) { n = x; }
 
 void GameState::setStateAt(int x, int y, int v) { state[x][y] = v; }
 
+void GameState::setBoardSize(int x, int y) {
+    //int px = 
+}
+
 int GameState::getTypeGame() { return type; }
 
 int GameState::getStateRow() { return m; }
@@ -112,6 +126,10 @@ int GameState::getStateRow() { return m; }
 int GameState::getStateCol() { return n; }
 
 int GameState::getStateAt(int x, int y) { return state[x][y]; }
+
+int GameState::getBoardHeight() { return playWindow.height(); }
+
+int GameState::getBoardWidth() { return playWindow.width(); }
 
 void GameState::print() {
     rectangle ss; ss.set(1, 1, (DEFAULT_HEIGHT << 1) + 1, (DEFAULT_WIDTH << 1) + 1);
@@ -129,23 +147,31 @@ void GameState::print() {
         int x = playWindow.top() + 1 + 2 * (i - 1), y = playWindow.left() + 1 +  2 * (j - 1);
         
         if (currentPtrPosition.first == x && currentPtrPosition.second == y) {
-            if (state[i][j]) Graphic::Color::reverseColorOn(state[i][j] + 1);
+            if (state[i][j]) Graphic::Color::reverseColorOn(state[i][j] + 2);
             else Graphic::Color::reverseOn();
+        } else {
+            if (state[i][j]) Graphic::Color::colorOn(state[i][j] + 2);
         }
         
         if (state[i][j]) mvaddch(x, y, state[i][j] == 1 ? 'X' : 'O');
         else mvaddch(x, y, ' ');
         
         if (currentPtrPosition.first == x && currentPtrPosition.second == y) {
-            if (state[i][j]) Graphic::Color::reverseColorOff(state[i][j] + 1);
+            if (state[i][j]) Graphic::Color::reverseColorOff(state[i][j] + 2);
             else Graphic::Color::reverseOff();
+        } else {
+            if (state[i][j]) Graphic::Color::colorOn(state[i][j] + 2);
         }
     }
 }
 
-void GameState::reset() {
+void GameState::reset(bool flag) {
     for (int i = 0; i < 111; ++i) for (int j = 0; j < 111; ++j)
         state[i][j] = 0;
+    if (flag) {
+        player[0].resetProfile();
+        player[1].resetProfile();
+    }
 }
 
 void GameState::Moving(int x, int y) {

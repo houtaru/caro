@@ -1,6 +1,8 @@
 #ifndef UTILS_H_DEFINED
 #define UTILS_H_DEFINED
 
+#include <string>
+
 namespace Utils {
     namespace Random {
         void seed();
@@ -10,6 +12,7 @@ namespace Utils {
 
     namespace Times {
         void delay(int ms);
+        std::string getDateTime();
     };
 };
 

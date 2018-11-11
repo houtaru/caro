@@ -26,8 +26,8 @@ namespace GameState {
 
         char getIcon() const;
 
-        std::string getName() { return name; }
-        
+        std::string getName();
+
         void doMove(int x, int y);
 
         void next();
@@ -39,6 +39,8 @@ namespace GameState {
         void isDraw();
         
         void printProfile();
+
+        void resetProfile();
     };
 
     extern int type; // 0/1 : PVP/PVC game
@@ -63,6 +65,8 @@ namespace GameState {
 
     void setStateAt(int x, int y, int v);
 
+    void setBoardSize(int x, int y);
+
     int getTypeGame();
 
     int getStateRow();
@@ -70,10 +74,18 @@ namespace GameState {
     int getStateCol();
 
     int getStateAt(int x, int y);
-    
+
+    int getBoardHeight();
+
+    int getBoardWidth();
+
+    int getPosOx();
+
+    int getPosOy();
+        
     void print();
 
-    void reset();
+    void reset(bool flag = true);
 
     void Moving(int x, int y);
 

@@ -1,10 +1,12 @@
 #include <ui.h>
-#include <tuple>
-#include <fstream>
+#include <data.h>
 #include <utils.h>
-#include <algorithm>
 #include <graphic.h>
 #include <GameState.h>
+
+#include <tuple>
+#include <fstream>
+#include <algorithm>
 
 using namespace std;
 
@@ -28,7 +30,7 @@ const std::vector <std::string> mainMenu {
     " Play with Computer ",
     "     Statistics     ",
     "       Option       ",
-    "", "", "", "", "", "",
+    "", "", "", "", "", "", "", "", "",
     "   GOMOKU v1.0.0   ",
     " Author: The San Cao",
     " Language using: C++"
@@ -124,9 +126,8 @@ void Graphic::load() {
 }
 
 void Graphic::Screens::init() {
-    currentScreen = DEMO_STORY_SCREEN;
-    currentPtr[MAIN_PTR] = PVP_SCREEN; 
-    currentPtr[STATIS_PTR] = STATISTIC_PVP;
+    currentScreen = MAIN_SCREEN;
+    currentPtr[MAIN_PTR] = currentPtr[STATIS_PTR] = 0;
 
     screens[DEMO_STORY_SCREEN].set(LINES / 2 - 9, COLS / 2 - 40, 7, 70);
 
@@ -134,9 +135,9 @@ void Graphic::Screens::init() {
     subscreens[MAIN_HEADER].set(max(4, screens[MAIN_SCREEN].height() / 2 - 14), max(5, screens[MAIN_SCREEN].width() / 2 - 34), 7, 69);
     subscreens[MAIN_MENU].set(subscreens[MAIN_HEADER].bottom() + 5, subscreens[MAIN_HEADER].left() + 22, 15, 20);
 
-    screens[STATISTIC_SCREEN].set(subscreens[MAIN_HEADER].top() + 5, subscreens[MAIN_HEADER].left() + 22, 9, 22);
-    subscreens[STATISTIC_PVP].set(subscreens[MAIN_HEADER].top() + 5, subscreens[MAIN_HEADER].left() + 22, 9, 20);
-    subscreens[STATISTIC_PVC].set(subscreens[MAIN_HEADER].top() + 5, subscreens[MAIN_HEADER].left() + 22, 9, 20);
+    screens[STATISTIC_SCREEN].set(subscreens[MAIN_HEADER].top() + 9, subscreens[MAIN_HEADER].left() + 22, 9, 22);
+    subscreens[STATISTIC_PVP].set(subscreens[MAIN_HEADER].top() + 9, subscreens[MAIN_HEADER].left() + 22, 9, 20);
+    subscreens[STATISTIC_PVC].set(subscreens[MAIN_HEADER].top() + 9, subscreens[MAIN_HEADER].left() + 22, 9, 20);
 
     screens[OPTION_SCREEN].set(subscreens[MAIN_HEADER].bottom() + 4, subscreens[MAIN_HEADER].left() + 24, 8, 20);
 }
@@ -148,7 +149,7 @@ void Graphic::Screens::Clear(int x, int y, int h, int w) {
 }
 
 void Graphic::Screens::sketchScreen() {
-    if (currentScreen != OPTION_SCREEN) Clear(0, 0, LINES, COLS);
+    if (currentScreen != OPTION_SCREEN && currentScreen != STATISTIC_SCREEN) Clear(0, 0, LINES, COLS);
     if (currentScreen == DEMO_STORY_SCREEN) {
         sketchDemoStory();
         sketchScreen();
@@ -174,7 +175,7 @@ void Graphic::Screens::sketchDemoStory() {
         for (auto it : ObjectFall::getData()) if (!screens[DEMO_STORY_SCREEN].inside(it.getPos())) {
             mvaddch(it.getPos().first, it.getPos().second, ' ');
         }
-        if (timer % 5 == 0) ObjectFall::update();
+        if (timer % 3 == 0) ObjectFall::update();
         for (auto it : ObjectFall::getData()) if (!screens[DEMO_STORY_SCREEN].inside(it.getPos())) {
             mvaddch(it.getPos().first, it.getPos().second, it.getIcon());
         }
@@ -222,12 +223,34 @@ void Graphic::Screens::sketchMainWindow() {
     }
 }
 
-void Graphic::Screens::sketchGameScreen(bool flag) {
-    if (!flag) {
-        GameState::print();
-    } else {
+void Graphic::Screens::sketchGameScreen() {
+    GameState::print();
+    if (Data::Save::canLoadGame(GameState::getTypeGame())) {
+        Clear(GameState::getBoardHeight() / 2 - 2, GameState::getBoardWidth() / 2 - 30, 3, 60);
+        
+        attron(A_BOLD);
+        
+        mvprintw(GameState::getBoardHeight() / 2 - 1, GameState::getBoardWidth() / 2 - 10, "Continue         New Game");
+        
+        Color::reverseOn();
+        mvaddch(GameState::getBoardHeight() / 2 - 1, GameState::getBoardWidth() / 2 - 10, 'C');
+        mvaddch(GameState::getBoardHeight() / 2 - 1, GameState::getBoardWidth() / 2 - 10 + 17, 'N');
+        Color::reverseOff();
 
+        attroff(A_BOLD);
+
+        while (true) {
+            Ui::Input::read();
+            if (Ui::Input::is_C_Key()) {
+                Data::Save::loadGame(GameState::getTypeGame());
+                break;
+            }
+            if (Ui::Input::is_N_Key()) {
+                break;
+            }
+        }
     }
+    GameState::print();
 }
 
 void Graphic::Screens::sketchStatisticScreen() {
@@ -246,67 +269,62 @@ void Graphic::Screens::sketchStatisticScreen() {
     }
 }
 
-void Graphic::Screens::sketchStatisPVPScreen() {
+void Graphic::Screens::sketchStatisPVPScreen(bool flag) {
     Clear(subscreens[STATISTIC_PVP].top(), subscreens[STATISTIC_PVP].left(), subscreens[STATISTIC_PVP].height(), subscreens[STATISTIC_PVP].width());
     subscreens[STATISTIC_PVP].drawEdges();
     
-    ifstream inp("history/OldPvPGame");
-    string s, t, c;
-    int ptr = 0, mm, nn;
-    vector < tuple <string, int, int, string> > list;
-    while (inp >> s >> t >> mm >> nn >> c) {
-        list.emplace_back(s + " " + t, mm, nn, c);
-        int x = subscreens[STATISTIC_PVP].top() + 2 + ptr, y = subscreens[STATISTIC_PVP].left() + 2;
-        if (ptr == 0) {
+    Data::Statis::loadStatis(STATISTIC_PVP);
+    int ptr = 0, sz = Data::Statis::getStatisSize();
+    for (int i = 0; i < sz; ++i) {
+        if (i == ptr) {
             attron(A_BOLD);
             Color::reverseOn();
         }
-        mvaddstr(x, y, s.c_str());
-        if (ptr == 0) {
+        mvaddstr(subscreens[STATISTIC_PVP].top() + 2 + i, subscreens[STATISTIC_PVP].left() + 1, Data::Statis::getStatisName(i).c_str());
+        if (i == ptr) {
             attroff(A_BOLD);
             Color::reverseOff();
         }
-        ptr++;
     }
+    refresh();
+    
+    if (!flag) return;
+
     while (true) {
         Ui::Input::read();
-        if (Ui::Input::is_Q_Key()) break;
         if (Ui::Input::isKeyUp()) {
-            int x = subscreens[STATISTIC_PVP].top() + 2 + ptr, y = subscreens[STATISTIC_PVP].left() + 2;
-            tie(s, mm, nn, c) = list[ptr];
-            mvaddstr(x, y, s.c_str());
-            ptr = (ptr - 1 + 5) % 5;
-            tie(s, mm, nn, c) = list[ptr];
-            attron(A_BOLD);
-            Color::reverseOn();
-            
-            mvaddstr(x, y, s.c_str());
-            
-            attroff(A_BOLD);
-            Color::reverseOff();
+            mvaddstr(subscreens[STATISTIC_PVP].top() + 2 + ptr, subscreens[STATISTIC_PVP].left() + 1, Data::Statis::getStatisName(ptr).c_str());
+            ptr = (ptr - 1 + sz) % sz;
+            Color::reverseOn(); attron(A_BOLD);
+            mvaddstr(subscreens[STATISTIC_PVP].top() + 2 + ptr, subscreens[STATISTIC_PVP].left() + 1, Data::Statis::getStatisName(ptr).c_str());
+            Color::reverseOff(); attroff(A_BOLD);
         }
         if (Ui::Input::isKeyDown()) {
-            int x = subscreens[STATISTIC_PVP].top() + 2 + ptr, y = subscreens[STATISTIC_PVP].left() + 2;
-            
-            tie(s, mm, nn, c) = list[ptr];
-            mvaddstr(x, y, s.c_str());
-            
-            ptr = (ptr - 1 + 5) % 5;
-            
-            tie(s, mm, nn, c) = list[ptr];
-            
-            attron(A_BOLD);
-            Color::reverseOn();
-            
-            mvaddstr(x, y, s.c_str());
-            
-            attroff(A_BOLD);
-            Color::reverseOff();
+            mvaddstr(subscreens[STATISTIC_PVP].top() + 2 + ptr, subscreens[STATISTIC_PVP].left() + 1, Data::Statis::getStatisName(ptr).c_str());
+            ptr = (ptr + 1 + sz) % sz;
+            Color::reverseOn(); attron(A_BOLD);
+            mvaddstr(subscreens[STATISTIC_PVP].top() + 2 + ptr, subscreens[STATISTIC_PVP].left() + 1, Data::Statis::getStatisName(ptr).c_str());
+            Color::reverseOff(); attroff(A_BOLD);
         }
         if (Ui::Input::isEnterKey()) {
-            
+            Clear(0, 0, LINES, COLS);
+            Data::Statis::getState(ptr);
+            mvaddstr(22, 101, "Press B to return");
+            Color::reverseOn();
+            mvaddch(22, 98 + 104, 'B');
+            Color::reverseOff();
+            while (true) {
+                Ui::Input::read();
+                if (Ui::Input::is_B_Key()) {
+                    sketchMainWindow();
+                    sketchStatisPVPScreen(false);
+                    break;
+                }
+            }
         }
+        refresh();
     }
+    refresh();
 }
 
 void Graphic::Screens::updateCurrentScreen(int x) { 

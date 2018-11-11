@@ -1,4 +1,5 @@
 #include <ui.h>
+#include <data.h>
 #include <graphic.h>
 #include <GameState.h>
 
@@ -120,6 +121,7 @@ void Ui::Controler::enterKeyProcess() {
             GameState::doMove();
             
             if (GameState::haveWinner()) {
+                Data::Statis::saveGame(STATISTIC_PVP);
                 GameState::updateData();
                 while (true) {
                     Input::read();
@@ -163,7 +165,7 @@ void Ui::Controler::enterKeyProcess() {
     if (Graphic::Screens::getCurrentScreen() == STATISTIC_SCREEN) {
         if (Graphic::Screens::getPtr(STATIS_PTR) + 3 == STATISTIC_PVP) {
             Graphic::Screens::sketchStatisPVPScreen();
-        } else {
+        } else {GameState::print();
             //Graphic::Screens::sketchStatisPVCScreen();
         }
     }
@@ -180,12 +182,15 @@ void Ui::Controler::backSpaceKeyProcess() {
                 break;
             }
             if (Input::is_S_Key()) {
-                //Save game for load game later and return to main screen
+                Data::Save::savedGame(true);
+                GameState::reset(true);
+                Graphic::Screens::updateCurrentScreen(MAIN_SCREEN);
                 break;
             }
             if (Input::is_B_Key()) {
-                //Return to main screen without saving for load game
-                //Code along with B key process
+                Data::Save::savedGame(false);
+                GameState::reset(true);
+                Graphic::Screens::updateCurrentScreen(MAIN_SCREEN);
                 break;
             }
         }

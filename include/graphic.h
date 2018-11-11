@@ -67,7 +67,7 @@ struct rectangle {
         mvaddch(bottom(), right(), ACS_DIAMOND);
     }
     void drawTable() {
-        attron(A_BOLD);
+        //attron(A_BOLD);
         for (int x = top(); x <= bottom(); ++x)
             for (int y = left(); y <= right(); ++y) {
                 int h = x - top(), w = y - left();
@@ -78,7 +78,7 @@ struct rectangle {
                     mvaddch(x, y, (w % 2) ? ACS_HLINE : ACS_DIAMOND);
                 }
             }
-        attroff(A_BOLD);
+        //attroff(A_BOLD);
     }
     bool inside (std::pair <int, int> p) {
         return top() <= p.first && p.first <= bottom() && left() <= p.second && p.second <= right();
@@ -128,11 +128,11 @@ namespace Graphic {
 
         void sketchMainWindow();
 
-        void sketchGameScreen(bool flag = false);
+        void sketchGameScreen();
         
         void sketchStatisticScreen();
 
-        void sketchStatisPVPScreen();
+        void sketchStatisPVPScreen(bool flag = true);
 
         void sketchStatisPVCScreen();
         
