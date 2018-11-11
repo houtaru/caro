@@ -126,7 +126,7 @@ void Graphic::load() {
 }
 
 void Graphic::Screens::init() {
-    currentScreen = MAIN_SCREEN;
+    currentScreen = DEMO_STORY_SCREEN;
     currentPtr[MAIN_PTR] = currentPtr[STATIS_PTR] = 0;
 
     screens[DEMO_STORY_SCREEN].set(LINES / 2 - 9, COLS / 2 - 40, 7, 70);

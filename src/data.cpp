@@ -14,6 +14,8 @@ void Data::Save::savedGame(bool flag) {
     std::ofstream out((currentScreen == PVP_SCREEN) ? "history/savedPVP.game" : "history/savedPvC.game");
 
     out << flag << "\n";
+
+    if (!flag) return;
     
     out << currentScreen << "\n";
     
