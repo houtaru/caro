@@ -116,7 +116,7 @@ void GameState::setStateCol(int x) { n = x; }
 void GameState::setStateAt(int x, int y, int v) { state[x][y] = v; }
 
 void GameState::setBoardSize(int x, int y) {
-    //int px = 
+    playWindow.set(DEFAULT_HEIGHT - x + 1, DEFAULT_WIDTH - y + 1, (x << 1) + 1, (y << 1) + 1);
 }
 
 int GameState::getTypeGame() { return type; }
@@ -142,7 +142,7 @@ void GameState::print() {
     } else {
         currentPlayer = 1;
     }
-
+    
     for (int i = 1; i <= m; ++i) for (int j = 1; j <= n; ++j) {
         int x = playWindow.top() + 1 + 2 * (i - 1), y = playWindow.left() + 1 +  2 * (j - 1);
         
@@ -160,7 +160,7 @@ void GameState::print() {
             if (state[i][j]) Graphic::Color::reverseColorOff(state[i][j] + 2);
             else Graphic::Color::reverseOff();
         } else {
-            if (state[i][j]) Graphic::Color::colorOn(state[i][j] + 2);
+            if (state[i][j]) Graphic::Color::colorOff(state[i][j] + 2);
         }
     }
 }

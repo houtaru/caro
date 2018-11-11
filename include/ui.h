@@ -56,6 +56,10 @@ namespace Ui {
         void enterKeyProcess();
 
         void backSpaceKeyProcess();
+
+        void PvPStatisControl();
+
+        void PvCStatisControl();
     };
 };
 

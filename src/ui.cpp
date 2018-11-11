@@ -45,6 +45,10 @@ void Ui::Controler::process() {
     if (Ui::Input::isEnterKey()) enterKeyProcess();
     
     if (Ui::Input::is_Z_Key()) backSpaceKeyProcess();
+
+    if (Graphic::Screens::getCurrentScreen() == STATISTIC_SCREEN && Input::is_B_Key()) {
+        Graphic::Screens::updateCurrentScreen(MAIN_SCREEN);
+    }
 }
 
 void Ui::Controler::arrowKeyProcess() {
@@ -81,7 +85,7 @@ void Ui::Controler::keyDownProcess() {
     }
     
     if (Graphic::Screens::getCurrentScreen() == STATISTIC_SCREEN) {
-        Graphic::Screens::updatePtr(STATIS_PTR, -1);
+        Graphic::Screens::updatePtr(STATIS_PTR, 1);
     }
 }
 
@@ -165,7 +169,8 @@ void Ui::Controler::enterKeyProcess() {
     if (Graphic::Screens::getCurrentScreen() == STATISTIC_SCREEN) {
         if (Graphic::Screens::getPtr(STATIS_PTR) + 3 == STATISTIC_PVP) {
             Graphic::Screens::sketchStatisPVPScreen();
-        } else {GameState::print();
+            Ui::Controler::PvPStatisControl();
+        } else {
             //Graphic::Screens::sketchStatisPVCScreen();
         }
     }
@@ -194,5 +199,36 @@ void Ui::Controler::backSpaceKeyProcess() {
                 break;
             }
         }
+    }
+}
+
+void Ui::Controler::PvPStatisControl() {
+    int ptr = 0, sz = Data::Statis::getStatisSize();
+    while (true) {
+        Input::read();
+        if (Input::is_B_Key()) {
+            Graphic::Screens::sketchMainWindow();
+            Graphic::Screens::sketchStatisticScreen();
+            break;
+        }
+        if (Input::isEnterKey()) {
+            Data::Statis::getState(ptr);
+            ptr = 0;
+        }
+        if (Input::isKeyUp()) {
+            mvaddstr(Graphic::Screens::subscreens[STATISTIC_PVP].top() + 2 + ptr, Graphic::Screens::subscreens[STATISTIC_PVP].left() + 1, Data::Statis::getStatisName(ptr).c_str());
+            ptr = (ptr - 1 + sz) % sz;
+            Graphic::Color::reverseOn(); attron(A_BOLD);
+            mvaddstr(Graphic::Screens::subscreens[STATISTIC_PVP].top() + 2 + ptr, Graphic::Screens::subscreens[STATISTIC_PVP].left() + 1, Data::Statis::getStatisName(ptr).c_str());
+            Graphic::Color::reverseOff(); attroff(A_BOLD);
+        }
+        if (Input::isKeyDown()) {
+            mvaddstr(Graphic::Screens::subscreens[STATISTIC_PVP].top() + 2 + ptr, Graphic::Screens::subscreens[STATISTIC_PVP].left() + 1, Data::Statis::getStatisName(ptr).c_str());
+            ptr = (ptr + 1) % sz;
+            Graphic::Color::reverseOn(); attron(A_BOLD);
+            mvaddstr(Graphic::Screens::subscreens[STATISTIC_PVP].top() + 2 + ptr, Graphic::Screens::subscreens[STATISTIC_PVP].left() + 1, Data::Statis::getStatisName(ptr).c_str());
+            Graphic::Color::reverseOff(); attroff(A_BOLD);
+        }
+        refresh();
     }
 }

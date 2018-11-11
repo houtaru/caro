@@ -136,10 +136,10 @@ void Graphic::Screens::init() {
     subscreens[MAIN_MENU].set(subscreens[MAIN_HEADER].bottom() + 5, subscreens[MAIN_HEADER].left() + 22, 15, 20);
 
     screens[STATISTIC_SCREEN].set(subscreens[MAIN_HEADER].top() + 9, subscreens[MAIN_HEADER].left() + 22, 9, 22);
-    subscreens[STATISTIC_PVP].set(subscreens[MAIN_HEADER].top() + 9, subscreens[MAIN_HEADER].left() + 22, 9, 20);
-    subscreens[STATISTIC_PVC].set(subscreens[MAIN_HEADER].top() + 9, subscreens[MAIN_HEADER].left() + 22, 9, 20);
+    subscreens[STATISTIC_PVP].set(subscreens[MAIN_HEADER].top() + 9, subscreens[MAIN_HEADER].left() + 22, 9, 22);
+    subscreens[STATISTIC_PVC].set(subscreens[MAIN_HEADER].top() + 9, subscreens[MAIN_HEADER].left() + 22, 9, 22);
 
-    screens[OPTION_SCREEN].set(subscreens[MAIN_HEADER].bottom() + 4, subscreens[MAIN_HEADER].left() + 24, 8, 20);
+    screens[OPTION_SCREEN].set(subscreens[MAIN_HEADER].bottom() + 9, subscreens[MAIN_HEADER].left() + 22, 9, 22);
 }
 
 void Graphic::Screens::Clear(int x, int y, int h, int w) {
@@ -232,6 +232,7 @@ void Graphic::Screens::sketchGameScreen() {
         
         mvprintw(GameState::getBoardHeight() / 2 - 1, GameState::getBoardWidth() / 2 - 10, "Continue         New Game");
         
+            //Graphic::Screens::sketchStatisPVPScreen();
         Color::reverseOn();
         mvaddch(GameState::getBoardHeight() / 2 - 1, GameState::getBoardWidth() / 2 - 10, 'C');
         mvaddch(GameState::getBoardHeight() / 2 - 1, GameState::getBoardWidth() / 2 - 10 + 17, 'N');
@@ -274,55 +275,18 @@ void Graphic::Screens::sketchStatisPVPScreen(bool flag) {
     subscreens[STATISTIC_PVP].drawEdges();
     
     Data::Statis::loadStatis(STATISTIC_PVP);
-    int ptr = 0, sz = Data::Statis::getStatisSize();
+    int sz = Data::Statis::getStatisSize();
+
     for (int i = 0; i < sz; ++i) {
-        if (i == ptr) {
+        if (i == 0) {
             attron(A_BOLD);
             Color::reverseOn();
         }
         mvaddstr(subscreens[STATISTIC_PVP].top() + 2 + i, subscreens[STATISTIC_PVP].left() + 1, Data::Statis::getStatisName(i).c_str());
-        if (i == ptr) {
+        if (i == 0) {
             attroff(A_BOLD);
             Color::reverseOff();
         }
-    }
-    refresh();
-    
-    if (!flag) return;
-
-    while (true) {
-        Ui::Input::read();
-        if (Ui::Input::isKeyUp()) {
-            mvaddstr(subscreens[STATISTIC_PVP].top() + 2 + ptr, subscreens[STATISTIC_PVP].left() + 1, Data::Statis::getStatisName(ptr).c_str());
-            ptr = (ptr - 1 + sz) % sz;
-            Color::reverseOn(); attron(A_BOLD);
-            mvaddstr(subscreens[STATISTIC_PVP].top() + 2 + ptr, subscreens[STATISTIC_PVP].left() + 1, Data::Statis::getStatisName(ptr).c_str());
-            Color::reverseOff(); attroff(A_BOLD);
-        }
-        if (Ui::Input::isKeyDown()) {
-            mvaddstr(subscreens[STATISTIC_PVP].top() + 2 + ptr, subscreens[STATISTIC_PVP].left() + 1, Data::Statis::getStatisName(ptr).c_str());
-            ptr = (ptr + 1 + sz) % sz;
-            Color::reverseOn(); attron(A_BOLD);
-            mvaddstr(subscreens[STATISTIC_PVP].top() + 2 + ptr, subscreens[STATISTIC_PVP].left() + 1, Data::Statis::getStatisName(ptr).c_str());
-            Color::reverseOff(); attroff(A_BOLD);
-        }
-        if (Ui::Input::isEnterKey()) {
-            Clear(0, 0, LINES, COLS);
-            Data::Statis::getState(ptr);
-            mvaddstr(22, 101, "Press B to return");
-            Color::reverseOn();
-            mvaddch(22, 98 + 104, 'B');
-            Color::reverseOff();
-            while (true) {
-                Ui::Input::read();
-                if (Ui::Input::is_B_Key()) {
-                    sketchMainWindow();
-                    sketchStatisPVPScreen(false);
-                    break;
-                }
-            }
-        }
-        refresh();
     }
     refresh();
 }

@@ -16,12 +16,7 @@ void Global::process() {
         Ui::Input::read();
         Ui::Controler::process();
     }
-    Global::saveGame();
     Global::close();
-}
-
-void Global::saveGame() {
-
 }
 
 void Global::close() { endwin(); }

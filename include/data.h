@@ -22,7 +22,6 @@
  *  + state: game board of the match
  * */
 
-#include <tuple>
 #include <vector>
 #include <string>
 
@@ -36,7 +35,7 @@ namespace Data {
     }
 
     namespace Statis {
-        extern std::vector < std::tuple <std::string, std::string, int, int, std::string> > list;
+        extern std::vector < std::string >list;
 
         void saveGame(int flag); // 0 : PVP; 1 : PVC
 
@@ -47,6 +46,8 @@ namespace Data {
         std::string getStatisName(int i);
 
         void getState(int i);
+
+        int to_int(std::string s);
     }
 };
 

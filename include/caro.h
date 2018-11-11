@@ -6,8 +6,6 @@ namespace Global {
 
     void process();
 
-    void saveGame();
-
     void close();
 };
 
