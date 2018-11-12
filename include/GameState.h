@@ -79,6 +79,10 @@ namespace GameState {
 
     int getBoardWidth();
 
+    int getPtrOx();
+
+    int getPtrOy();
+
     int getPosOx();
 
     int getPosOy();

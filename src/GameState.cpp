@@ -131,6 +131,10 @@ int GameState::getBoardHeight() { return playWindow.height(); }
 
 int GameState::getBoardWidth() { return playWindow.width(); }
 
+int GameState::getPtrOx() { return currentPtrPosition.first / 2; }
+
+int GameState::getPtrOy() { return currentPtrPosition.second / 2; }
+
 void GameState::print() {
     rectangle ss; ss.set(1, 1, (DEFAULT_HEIGHT << 1) + 1, (DEFAULT_WIDTH << 1) + 1);
     ss.drawEdges();
