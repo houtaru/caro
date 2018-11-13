@@ -40,15 +40,6 @@ const std::vector <std::string> statisMenu {
     "  Play with Friend  ",
     " Play with Computer "
 };
-
-const std::vector < std::vector < std::string > > optionMenu {
-    {"       Sound        ",
-     "         On         ", 
-     "        Off         ",},
-    {"       Size         "},
-    {"       Icon         "}
-};
-
 //ObjectFall Definition
 rectangle ObjectFall::field;
 vector <ObjectFall::Object> ObjectFall::object_set;
@@ -135,7 +126,9 @@ void Graphic::load() {
 
 void Graphic::Screens::init() {
     currentScreen = DEMO_STORY_SCREEN;
-    currentPtr[MAIN_PTR] = currentPtr[STATIS_PTR] = 0;
+    currentPtr[MAIN_PTR] = 0;
+    currentPtr[STATIS_PTR] = 0;
+    currentPtr[OPTION_PTR] = 0;
 
     screens[DEMO_STORY_SCREEN].set(LINES / 2 - 9, COLS / 2 - 40, 7, 70);
 
@@ -335,22 +328,62 @@ void Graphic::Screens::sketchOptionScreen() {
     screens[OPTION_SCREEN].drawEdges();
     int ptr = 0;
     for (int i = 0; i < optionMenu.size(); ++i) {
-        if (i == 0) {
+        if (i == currentPtr[OPTION_PTR]) {
             Color::reverseOn(); attron(A_BOLD);
         }
         mvaddstr(screens[OPTION_SCREEN].top() + 3 + i, screens[OPTION_SCREEN].left() + 1, optionMenu[i][0].c_str());
-        if (i == 0) {
+        if (i == currentPtr[OPTION_PTR]) {
             Color::reverseOff(); attroff(A_BOLD);
         }
     }
+
+    attron(A_BOLD | A_BLINK);
+    mvaddstr(screens[OPTION_SCREEN].bottom() + 2, screens[OPTION_SCREEN].left() + 2, "Press B to return");
+    attroff(A_BOLD | A_BLINK);
     refresh();
 }
 
-void Graphic::Screens::sketchScreen() {
+void Graphic::Screens::sketchSoundScreen() {
     Clear(screens[OPTION_SCREEN].top(), screens[OPTION_SCREEN].left(), screens[OPTION_SCREEN].height(), screens[OPTION_SCREEN].width());
     screens[OPTION_SCREEN].drawEdges();
 
-    if (Ui::Controler::soundState == 0)
+    if (Ui::Controler::makeSound() == 0) {
+        attron(A_BOLD); Color::reverseOn();
+    }
+    mvaddstr(screens[OPTION_SCREEN].top() + 3, screens[OPTION_SCREEN].left() + 1, optionMenu[0][1].c_str());
+    if (Ui::Controler::makeSound() == 0) {
+        attroff(A_BOLD); Color::reverseOff();
+    }
+    
+    if (Ui::Controler::makeSound() == 1) {
+        attron(A_BOLD); Color::reverseOn();
+    }
+    mvaddstr(screens[OPTION_SCREEN].top() + 3 + 1, screens[OPTION_SCREEN].left() + 1, optionMenu[0][2].c_str());
+    if (Ui::Controler::makeSound() == 1) {
+        attroff(A_BOLD); Color::reverseOff();
+    }
+}
+
+void Graphic::Screens::sketchSizeScreen() {
+    Clear(screens[OPTION_SCREEN].top(), screens[OPTION_SCREEN].left(), screens[OPTION_SCREEN].height(), screens[OPTION_SCREEN].width());
+    screens[OPTION_SCREEN].drawEdges();
+
+    attron(A_BOLD); Color::reverseOn();
+    mvprintw(screens[OPTION_SCREEN].top() + 3, screens[OPTION_SCREEN].left() + 1, "Height: %d", GameState::getBoardHeight() / 2);
+    attroff(A_BOLD); Color::reverseOff();
+    
+    mvprintw(screens[OPTION_SCREEN].top() + 4, screens[OPTION_SCREEN].left() + 1, "Width:  %d", GameState::getBoardWidth() / 2);
+}
+
+void Graphic::Screens::sketchIconScreen() {
+    Clear(screens[OPTION_SCREEN].top(), screens[OPTION_SCREEN].left(), screens[OPTION_SCREEN].height(), screens[OPTION_SCREEN].width());
+    screens[OPTION_SCREEN].drawEdges();
+
+    attron(A_BOLD); Color::reverseOn();
+    mvprintw(screens[OPTION_SCREEN].top() + 3, screens[OPTION_SCREEN].left() + 1, "First Player:  %c", GameState::player[0].getIcon());
+    attroff(A_BOLD); Color::reverseOff();
+    
+    mvprintw(screens[OPTION_SCREEN].top() + 4, screens[OPTION_SCREEN].left() + 1, "Second Player: %c", GameState::player[1].getIcon());
 }
 
 void Graphic::Screens::updateCurrentScreen(int x) { 
@@ -380,12 +413,12 @@ void Graphic::Screens::updatePtr(int id, int x) {
         attroff(A_BOLD); Color::reverseOff();
     }
     if (id == OPTION_PTR) {
-        mvaddstr(screens[OPTION_SCREEN].top() + 3 + currentPtr[STATIS_PTR], screens[OPTION_SCREEN].left() + 1, statisMenu[currentPtr[OPTION_PTR]].c_str());
+        mvaddstr(screens[OPTION_SCREEN].top() + 3 + currentPtr[OPTION_PTR], screens[OPTION_SCREEN].left() + 1, optionMenu[currentPtr[OPTION_PTR]][0].c_str());
         currentPtr[OPTION_PTR] = (currentPtr[OPTION_PTR] + x + 3) % 3;
         
         attron(A_BOLD); Color::reverseOn();
         
-        mvaddstr(screens[OPTION_SCREEN].top() + 3 + currentPtr[STATIS_PTR], screens[OPTION_SCREEN].left() + 1, statisMenu[currentPtr[OPTION_PTR]].c_str());
+        mvaddstr(screens[OPTION_SCREEN].top() + 3 + currentPtr[OPTION_PTR], screens[OPTION_SCREEN].left() + 1, optionMenu[currentPtr[OPTION_PTR]][0].c_str());
         
         attroff(A_BOLD); Color::reverseOff();
     }

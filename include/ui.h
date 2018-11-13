@@ -39,10 +39,16 @@ namespace Ui {
         bool is_N_Key();
 
         bool is_B_Key();
+
+        bool isDigit();
+
+        bool isAlpha();
+
+        int getInput();
     };
     namespace Controler {
         extern int soundState;
-        
+
         void process();
         
         void arrowKeyProcess();
@@ -70,6 +76,10 @@ namespace Ui {
         void sizeControl();
         
         void iconControl();
+
+        int makeSound();
+
+        void setSound(int x);
     };
 };
 

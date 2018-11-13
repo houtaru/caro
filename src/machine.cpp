@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <utility>
 
+#include <ui.h>
 #include <machine.h>
 #include <GameState.h>
 
@@ -36,7 +37,7 @@ std::vector <int> Machine::check(int px, int py, int icon_) {
     for (i = _x - 1, j = _y - 1; i && j && state[i][j] == icon_; --i, --j) l++;
     ss[5] = i > 0 && j > 0 && state[i][j] == 0;
     
-    for (i = _x + 1, j = _y + 1; i && j && state[i][j] == icon_; ++i, ++j) r++;
+    for (i = _x + 1, j = _y + 1; i <= m && j <= n && state[i][j] == icon_; ++i, ++j) r++;
     ss[5] += i <= m && j <= n && state[i][j] == 0;
 
     ss[4] = l + r + 1;
@@ -112,8 +113,8 @@ void Machine::doMove() {
 
     state[p.first][p.second] = 2;
     
-    beep();
-    
+    if (Ui::Controler::makeSound() == 0) beep();   
+
     Graphic::Color::colorOn(PLAYER_TWO_COLOR);
     mvaddch(x, y, player[1].getIcon());
     Graphic::Color::colorOff(PLAYER_TWO_COLOR);

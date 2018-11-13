@@ -113,6 +113,14 @@ namespace ObjectFall {
 
 namespace Graphic {
     namespace Screens {
+        const std::vector < std::vector < std::string > > optionMenu {
+            {"       Sound        ",
+            "         On         ", 
+            "        Off         ",},
+            {"       Size         "},
+            {"       Icon         "}
+        };
+
         extern rectangle screens[6];
         extern rectangle subscreens[5];
         extern int currentScreen;
@@ -173,7 +181,6 @@ namespace Graphic {
         
         void reverseOff();
     }
-
 
     void init();
 

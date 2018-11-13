@@ -31,7 +31,7 @@ int GameState::getPosOx() { return playWindow.top(); }
 int GameState::getPosOy() { return playWindow.left(); }
 
 void GameState::PlayerState::doMove(int x, int y) {
-    beep();
+    if (Ui::Controler::makeSound() == 0) beep();
 
     x = playWindow.top() + 2 * (x - 1) + 1;
     y = playWindow.left() + 2 * (y - 1) + 1;
