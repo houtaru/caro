@@ -224,6 +224,13 @@ void Graphic::Screens::sketchMainWindow() {
 }
 
 void Graphic::Screens::sketchGameScreen() {
+    attron(A_BOLD);
+    mvaddstr(22, 102, "Arrow key : move cursor");
+    mvaddstr(24, 104, "Z : Return to main");
+    mvaddstr(26, 109, "U: Undo");
+    mvaddstr(28, 102, "Space/Enter: take turn");
+    attroff(A_BOLD);
+
     GameState::print();
     if (Data::Save::canLoadGame(GameState::getTypeGame())) {
         Clear(GameState::getBoardHeight() / 2 - 2, GameState::getBoardWidth() / 2 - 30, 3, 60);
@@ -268,6 +275,9 @@ void Graphic::Screens::sketchStatisticScreen() {
             Color::reverseOff();
         }
     }
+    attron(A_BOLD | A_BLINK);
+    mvaddstr(screens[STATISTIC_SCREEN].bottom() + 2, screens[STATISTIC_SCREEN].left() + 2, "Press B to return");
+    attroff(A_BOLD | A_BLINK);
 }
 
 void Graphic::Screens::sketchStatisPVPScreen(bool flag) {

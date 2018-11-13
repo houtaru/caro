@@ -299,7 +299,7 @@ bool GameState::canMove() {
 void GameState::updateData() {
     if (winner != -1) {
         player[winner - 1].isWinner();
-        if (type == PVP_SCREEN) player[2 - winner].isLoser();
+        player[2 - winner].isLoser();
     } else {
         player[0].isDraw();
         player[1].isDraw();

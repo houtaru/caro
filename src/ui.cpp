@@ -106,7 +106,6 @@ void Ui::Controler::keyRightProcess() {
 void Ui::Controler::enterKeyProcess() {
     if (Graphic::Screens::getCurrentScreen() == MAIN_SCREEN) {
         Graphic::Screens::updateCurrentScreen(Graphic::Screens::getPtr(MAIN_PTR));
-        //Graphic::Screens::sketchScreen();
     } else 
     if (Graphic::Screens::getCurrentScreen() == PVP_SCREEN) {
         if (GameState::canMove() == false) {
@@ -180,6 +179,7 @@ void Ui::Controler::enterKeyProcess() {
                         return;
                     }
                     if (Input::is_Z_Key()) {
+                        GameState::reset(true);
                         Graphic::Screens::updateCurrentScreen(MAIN_SCREEN);
                         return;
                     }
@@ -187,7 +187,6 @@ void Ui::Controler::enterKeyProcess() {
             }
             refresh();
             
-            mvaddstr(30, 98, "Machine turn");
             Machine::doMove();
             refresh();
 
@@ -202,6 +201,7 @@ void Ui::Controler::enterKeyProcess() {
                         return;
                     }
                     if (Input::is_Z_Key()) {
+                        GameState::reset(true);
                         Graphic::Screens::updateCurrentScreen(MAIN_SCREEN);
                         return;
                     }
