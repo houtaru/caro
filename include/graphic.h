@@ -25,7 +25,8 @@ enum SUBSCREENS {
 
 enum POINTERS {
     MAIN_PTR,
-    STATIS_PTR
+    STATIS_PTR,
+    OPTION_PTR
 };
 
 #define EDGES_COLOR 2
@@ -115,9 +116,7 @@ namespace Graphic {
         extern rectangle screens[6];
         extern rectangle subscreens[5];
         extern int currentScreen;
-        extern int currentPtr[2];
-
-        extern int optionState[3][3];
+        extern int currentPtr[3];
         
         void init();
         void load();
@@ -139,6 +138,12 @@ namespace Graphic {
         void sketchStatisPVCScreen(bool flag = true);
         
         void sketchOptionScreen();
+
+        void sketchSoundScreen();
+
+        void sketchSizeScreen();
+
+        void sketchIconScreen();
 
         void updatePtr(int id, int x);
 

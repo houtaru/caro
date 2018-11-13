@@ -40,6 +40,8 @@ bool Ui::Input::is_U_Key() { return input == 'u' || input == 'U'; }
 
 bool Ui::Input::is_G_Key() { return input == 'G' || input == 'g'; }
 
+extern int Ui::Controler::soundState;
+
 void Ui::Controler::process() {
     if (Ui::Input::isArrowKey()) arrowKeyProcess();
     
@@ -75,6 +77,10 @@ void Ui::Controler::keyUpProcess() {
     if (Graphic::Screens::getCurrentScreen() == STATISTIC_SCREEN) {
         Graphic::Screens::updatePtr(STATIS_PTR, -1);
     }
+    
+    if (Graphic::Screens::getCurrentScreen() == OPTION_SCREEN) {
+        Graphic::Screens::updatePtr(OPTION_PTR, -1);
+    }
 }
 
 void Ui::Controler::keyDownProcess() {
@@ -88,6 +94,9 @@ void Ui::Controler::keyDownProcess() {
     
     if (Graphic::Screens::getCurrentScreen() == STATISTIC_SCREEN) {
         Graphic::Screens::updatePtr(STATIS_PTR, 1);
+    }
+    if (Graphic::Screens::getCurrentScreen() == OPTION_SCREEN) {
+        Graphic::Screens::updatePtr(OPTION_PTR, 1);
     }
 }
 
@@ -220,9 +229,20 @@ void Ui::Controler::enterKeyProcess() {
         }
     } else
     if (Graphic::Screens::getCurrentScreen() == OPTION_SCREEN) {
-        Graphic::Screens::sketchOptionScreen();
+        int x = Graphic::Screens::getPtr(OPTION_PTR);
+        if (x == 0) {
+            Graphic::Screens::sketchSoundScreen();
+            soundControl();
+        }
+        if (x == 1) {
+            Graphic::Screens::sketchSizeScreen();
+            sizeControl();
+        }
+        if (x == 2) {
+            Graphic::Screens::sketchIconScreen();
+            iconControl();
+        }
     }
-    //Remember to add user interface to option screen function 
 }
 
 void Ui::Controler::backSpaceKeyProcess() {
@@ -316,4 +336,8 @@ void Ui::Controler::undoProcess() {
     if (Graphic::Screens::getCurrentScreen() == PVC_SCREEN || Graphic::Screens::getCurrentScreen() == PVP_SCREEN) {
         GameState::undoProcess();
     }
+}
+
+void Ui::Controler::soundControl() {
+
 }

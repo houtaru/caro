@@ -42,7 +42,9 @@ const std::vector <std::string> statisMenu {
 };
 
 const std::vector < std::vector < std::string > > optionMenu {
-    {"       Sound        ", "On", "Off",},
+    {"       Sound        ",
+     "         On         ", 
+     "        Off         ",},
     {"       Size         "},
     {"       Icon         "}
 };
@@ -85,13 +87,11 @@ void ObjectFall::setBound(rectangle r) { field = r; }
 rectangle Graphic::Screens::screens[6];
 rectangle Graphic::Screens::subscreens[5];
 
-int Graphic::Screens::currentPtr[2];
+int Graphic::Screens::currentPtr[3];
 int Graphic::Screens::currentScreen;
 
 int Graphic::Color::colors[2][5];
 int Graphic::Color::currentBackgroundColor;
-
-int Graphic::Screens::optionState[3][3];
 
 //Graphic Function Definition
 void Graphic::init() {
@@ -344,30 +344,13 @@ void Graphic::Screens::sketchOptionScreen() {
         }
     }
     refresh();
-    while (true) {
-        Ui::Input::read();
-        if (Ui::Input::isKeyUp()) {
-            mvaddstr(screens[OPTION_SCREEN].top() + 3 + ptr, screens[OPTION_SCREEN].left() + 1, optionMenu[ptr][0].c_str());
+}
 
-            ptr = (ptr - 1 + (int) optionMenu.size()) % (int) optionMenu.size();
+void Graphic::Screens::sketchScreen() {
+    Clear(screens[OPTION_SCREEN].top(), screens[OPTION_SCREEN].left(), screens[OPTION_SCREEN].height(), screens[OPTION_SCREEN].width());
+    screens[OPTION_SCREEN].drawEdges();
 
-            Color::reverseOn(); attron(A_BOLD);
-            mvaddstr(screens[OPTION_SCREEN].top() + 3 + ptr, screens[OPTION_SCREEN].left() + 1, optionMenu[ptr][0].c_str());
-            Color::reverseOff(); attroff(A_BOLD);
-        }
-        if (Ui::Input::isKeyDown()) {
-            mvaddstr(screens[OPTION_SCREEN].top() + 3 + ptr, screens[OPTION_SCREEN].left() + 1, optionMenu[ptr][0].c_str());
-
-            ptr = (ptr + 1) % (int) optionMenu.size();
-
-            Color::reverseOn(); attron(A_BOLD);
-            mvaddstr(screens[OPTION_SCREEN].top() + 3 + ptr, screens[OPTION_SCREEN].left() + 1, optionMenu[ptr][0].c_str());
-            Color::reverseOff(); attroff(A_BOLD);
-        }
-        if (Ui::Input::isEnterKey()) {
-            
-        }
-    }
+    if (Ui::Controler::soundState == 0)
 }
 
 void Graphic::Screens::updateCurrentScreen(int x) { 
@@ -393,6 +376,16 @@ void Graphic::Screens::updatePtr(int id, int x) {
         attron(A_BOLD); Color::reverseOn();
         
         mvaddstr(screens[STATISTIC_SCREEN].top() + 3 + currentPtr[STATIS_PTR], screens[STATISTIC_SCREEN].left() + 1, statisMenu[currentPtr[STATIS_PTR]].c_str());
+        
+        attroff(A_BOLD); Color::reverseOff();
+    }
+    if (id == OPTION_PTR) {
+        mvaddstr(screens[OPTION_SCREEN].top() + 3 + currentPtr[STATIS_PTR], screens[OPTION_SCREEN].left() + 1, statisMenu[currentPtr[OPTION_PTR]].c_str());
+        currentPtr[OPTION_PTR] = (currentPtr[OPTION_PTR] + x + 3) % 3;
+        
+        attron(A_BOLD); Color::reverseOn();
+        
+        mvaddstr(screens[OPTION_SCREEN].top() + 3 + currentPtr[STATIS_PTR], screens[OPTION_SCREEN].left() + 1, statisMenu[currentPtr[OPTION_PTR]].c_str());
         
         attroff(A_BOLD); Color::reverseOff();
     }
@@ -431,4 +424,3 @@ void Graphic::Color::reverseOff() {
 }
 
 void Graphic::Color::setCurrentBackgroundColor(int x) { currentBackgroundColor = x; }
-

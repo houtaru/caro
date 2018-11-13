@@ -41,6 +41,8 @@ namespace Ui {
         bool is_B_Key();
     };
     namespace Controler {
+        extern int soundState;
+        
         void process();
         
         void arrowKeyProcess();
@@ -62,6 +64,12 @@ namespace Ui {
         void PvCStatisControl();
 
         void undoProcess();
+
+        void soundControl();
+
+        void sizeControl();
+        
+        void iconControl();
     };
 };
 
