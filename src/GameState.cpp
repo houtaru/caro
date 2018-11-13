@@ -1,5 +1,5 @@
-#include <graphic.h>
 #include <ui.h>
+#include <graphic.h>
 #include <GameState.h>
 
 using namespace std;
@@ -31,9 +31,12 @@ int GameState::getPosOx() { return playWindow.top(); }
 int GameState::getPosOy() { return playWindow.left(); }
 
 void GameState::PlayerState::doMove(int x, int y) {
+    x = playWindow.top() + 2 * (x - 1) + 1;
+    y = playWindow.left() + 2 * (y - 1) + 1;
+
     attron(A_BOLD);
     Graphic::Color::reverseColorOn(color);
-    mvaddch(x << 1, y << 1, chess);
+    mvaddch(x, y, chess);
     Graphic::Color::reverseColorOff(color);
     attroff(A_BOLD);
 }
@@ -170,6 +173,7 @@ void GameState::print() {
 }
 
 void GameState::reset(bool flag) {
+    winner = -1;
     for (int i = 0; i < 111; ++i) for (int j = 0; j < 111; ++j)
         state[i][j] = 0;
     if (flag) {
@@ -220,10 +224,10 @@ void GameState::Moving(int x, int y) {
     }
 }
 
-void GameState::doMove() {
+bool GameState::doMove() {
     int x = currentPtrPosition.first / 2, y = currentPtrPosition.second / 2;
     
-    if (state[x][y]) return;
+    if (state[x][y]) return false;
     
     state[x][y] = currentPlayer;
     
@@ -232,6 +236,18 @@ void GameState::doMove() {
     turnsList.push_back({x, y});
 
     if (type == PVP_SCREEN) nextTurn();
+    
+    return true;
+}
+
+void GameState::machine(std::pair <int, int> p) {
+    int x = p.first, y = p.second;
+    
+    state[x][y] = 2;
+    
+    GameState::player[1].doMove(x, y);
+    
+    turnsList.push_back(p);
 }
 
 void GameState::nextTurn() {
@@ -325,6 +341,25 @@ void GameState::backToMainScreen() {
     Graphic::Color::reverseOff();
     
     attroff(A_BOLD);
+    
+    refresh();
+}
+
+void GameState::undoProcess() {
+    if (turnsList.empty()) return;
+    int x = turnsList.back().first, y = turnsList.back().second;
+
+    Graphic::Color::reverseOn();
+    mvaddch(x << 1, y << 1, ' ');
+    Graphic::Color::reverseOff();
+    
+    if (currentPtrPosition.first != 2 * x || currentPtrPosition.second != 2 * y)
+        mvaddch(currentPtrPosition.first, currentPtrPosition.second, ' ');
+    
+    currentPtrPosition = make_pair(x << 1, y << 1);
+    
+    state[x][y] = 0;
+    turnsList.pop_back();
     
     refresh();
 }

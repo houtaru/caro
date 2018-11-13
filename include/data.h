@@ -45,7 +45,7 @@ namespace Data {
 
         std::string getStatisName(int i);
 
-        void getState(int i);
+        void getState(int type, int i);
 
         int to_int(std::string s);
     }

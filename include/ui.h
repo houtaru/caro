@@ -60,6 +60,8 @@ namespace Ui {
         void PvPStatisControl();
 
         void PvCStatisControl();
+
+        void undoProcess();
     };
 };
 

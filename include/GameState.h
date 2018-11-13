@@ -89,11 +89,13 @@ namespace GameState {
         
     void print();
 
-    void reset(bool flag = true);
+    void reset(bool flag = false);
 
     void Moving(int x, int y);
 
-    void doMove();
+    bool doMove();
+
+    void machine(std::pair <int, int> );
 
     void nextTurn();
     
@@ -104,6 +106,8 @@ namespace GameState {
     void updateData();
 
     void backToMainScreen();
+
+    void undoProcess();
 };
 
 #endif

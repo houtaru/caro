@@ -88,7 +88,7 @@ std::string Data::Statis::getStatisName(int i) {
     return list[5 * i] + " " + list[5 * i + 1];
 }
 
-void Data::Statis::getState(int i) {
+void Data::Statis::getState(int _type, int i) {
     std::string s, t, c; int n, m;
     s = 5 * i;
     t = list[5 * i + 1]; 
@@ -122,7 +122,8 @@ void Data::Statis::getState(int i) {
         if (Ui::Input::is_B_Key()) {
             Graphic::Screens::Clear(0, 0, LINES, COLS);
             Graphic::Screens::sketchMainWindow();
-            Graphic::Screens::sketchStatisPVPScreen();
+            if (_type == STATISTIC_PVP) Graphic::Screens::sketchStatisPVPScreen();
+            else Graphic::Screens::sketchStatisPVCScreen();
             break;
         }
     }

@@ -134,7 +134,7 @@ namespace Graphic {
 
         void sketchStatisPVPScreen(bool flag = true);
 
-        void sketchStatisPVCScreen();
+        void sketchStatisPVCScreen(bool flag = true);
         
         void sketchOptionScreen();
 

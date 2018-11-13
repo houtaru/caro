@@ -1,16 +1,14 @@
 #ifndef MACHINE_H_DEFINED
 #define MACHINE_H_DEFINED
 
+#include <vector>
+
 namespace Machine {
-    extern int level;
+    std::vector <int> check(int x, int y, int icon_);
 
-    void setLevel(int x);
+    std::pair <int, int> getMove();
 
-    void easy();
-
-    void medium();
-
-    void hard();
-};
+    void doMove();
+}
 
 #endif

@@ -1,5 +1,6 @@
 #include <ui.h>
 #include <data.h>
+#include <machine.h>
 #include <graphic.h>
 #include <GameState.h>
 
@@ -49,6 +50,7 @@ void Ui::Controler::process() {
     if (Graphic::Screens::getCurrentScreen() == STATISTIC_SCREEN && Input::is_B_Key()) {
         Graphic::Screens::updateCurrentScreen(MAIN_SCREEN);
     }
+    if (Ui::Input::is_U_Key()) undoProcess();
 }
 
 void Ui::Controler::arrowKeyProcess() {
@@ -113,6 +115,8 @@ void Ui::Controler::enterKeyProcess() {
             while (true) {
                 Input::read();
                 if (Input::is_R_Key()) {
+                    GameState::reset();
+
                     GameState::print();
                     break;
                 }
@@ -153,6 +157,7 @@ void Ui::Controler::enterKeyProcess() {
             while (true) {
                 Input::read();
                 if (Input::is_R_Key()) {
+                    GameState::reset();
                     GameState::print();
                     break;
                 }
@@ -162,17 +167,60 @@ void Ui::Controler::enterKeyProcess() {
                 }
             }
         } else {
-            GameState::doMove();
+            if (GameState::doMove() == false) return;
+            
+            if (GameState::haveWinner()) {
+                Data::Statis::saveGame(STATISTIC_PVC);
+                GameState::updateData();
+                while (true) {
+                    Input::read();
+                    if (Input::is_R_Key()) {
+                        GameState::reset();
+                        GameState::print();
+                        return;
+                    }
+                    if (Input::is_Z_Key()) {
+                        Graphic::Screens::updateCurrentScreen(MAIN_SCREEN);
+                        return;
+                    }
+                }
+            }
+            refresh();
+            
+            mvaddstr(30, 98, "Machine turn");
+            Machine::doMove();
+            refresh();
+
+            if (GameState::haveWinner()) {
+                Data::Statis::saveGame(STATISTIC_PVC);
+                GameState::updateData();
+                while (true) {
+                    Input::read();
+                    if (Input::is_R_Key()) {
+                        GameState::reset();
+                        GameState::print();
+                        return;
+                    }
+                    if (Input::is_Z_Key()) {
+                        Graphic::Screens::updateCurrentScreen(MAIN_SCREEN);
+                        return;
+                    }
+                }
+            }
+            refresh();
         }
-        //GameState::Machine::doMove();
     } else 
     if (Graphic::Screens::getCurrentScreen() == STATISTIC_SCREEN) {
         if (Graphic::Screens::getPtr(STATIS_PTR) + 3 == STATISTIC_PVP) {
             Graphic::Screens::sketchStatisPVPScreen();
             Ui::Controler::PvPStatisControl();
         } else {
-            //Graphic::Screens::sketchStatisPVCScreen();
+            Graphic::Screens::sketchStatisPVCScreen();
+            Ui::Controler::PvCStatisControl();
         }
+    }
+    if (Graphic::Screens::getCurrentScreen() == OPTION_SCREEN) {
+        //Graphic::Screens::sketchOptionScreen();
     }
     //Remember to add user interface to option screen function 
 }
@@ -212,7 +260,7 @@ void Ui::Controler::PvPStatisControl() {
             break;
         }
         if (Input::isEnterKey()) {
-            Data::Statis::getState(ptr);
+            Data::Statis::getState(STATISTIC_PVP, ptr);
             ptr = 0;
         }
         if (Input::isKeyUp()) {
@@ -230,5 +278,42 @@ void Ui::Controler::PvPStatisControl() {
             Graphic::Color::reverseOff(); attroff(A_BOLD);
         }
         refresh();
+    }
+}
+
+void Ui::Controler::PvCStatisControl() {
+    int ptr = 0, sz = Data::Statis::getStatisSize();
+    while (true) {
+        Input::read();
+        if (Input::is_B_Key()) {
+            Graphic::Screens::sketchMainWindow();
+            Graphic::Screens::sketchStatisticScreen();
+            break;
+        }
+        if (Input::isEnterKey()) {
+            Data::Statis::getState(STATISTIC_PVC, ptr);
+            ptr = 0;
+        }
+        if (Input::isKeyUp()) {
+            mvaddstr(Graphic::Screens::subscreens[STATISTIC_PVC].top() + 2 + ptr, Graphic::Screens::subscreens[STATISTIC_PVC].left() + 1, Data::Statis::getStatisName(ptr).c_str());
+            ptr = (ptr - 1 + sz) % sz;
+            Graphic::Color::reverseOn(); attron(A_BOLD);
+            mvaddstr(Graphic::Screens::subscreens[STATISTIC_PVC].top() + 2 + ptr, Graphic::Screens::subscreens[STATISTIC_PVC].left() + 1, Data::Statis::getStatisName(ptr).c_str());
+            Graphic::Color::reverseOff(); attroff(A_BOLD);
+        }
+        if (Input::isKeyDown()) {
+            mvaddstr(Graphic::Screens::subscreens[STATISTIC_PVC].top() + 2 + ptr, Graphic::Screens::subscreens[STATISTIC_PVC].left() + 1, Data::Statis::getStatisName(ptr).c_str());
+            ptr = (ptr + 1) % sz;
+            Graphic::Color::reverseOn(); attron(A_BOLD);
+            mvaddstr(Graphic::Screens::subscreens[STATISTIC_PVC].top() + 2 + ptr, Graphic::Screens::subscreens[STATISTIC_PVC].left() + 1, Data::Statis::getStatisName(ptr).c_str());
+            Graphic::Color::reverseOff(); attroff(A_BOLD);
+        }
+        refresh();
+    }
+}
+
+void Ui::Controler::undoProcess() {
+    if (Graphic::Screens::getCurrentScreen() == PVC_SCREEN || Graphic::Screens::getCurrentScreen() == PVP_SCREEN) {
+        GameState::undoProcess();
     }
 }

@@ -291,6 +291,27 @@ void Graphic::Screens::sketchStatisPVPScreen(bool flag) {
     refresh();
 }
 
+void Graphic::Screens::sketchStatisPVCScreen(bool flag) {
+    Clear(subscreens[STATISTIC_PVC].top(), subscreens[STATISTIC_PVC].left(), subscreens[STATISTIC_PVC].height(), subscreens[STATISTIC_PVC].width());
+    subscreens[STATISTIC_PVC].drawEdges();
+    
+    Data::Statis::loadStatis(STATISTIC_PVC);
+    int sz = Data::Statis::getStatisSize();
+
+    for (int i = 0; i < sz; ++i) {
+        if (i == 0) {
+            attron(A_BOLD);
+            Color::reverseOn();
+        }
+        mvaddstr(subscreens[STATISTIC_PVP].top() + 2 + i, subscreens[STATISTIC_PVP].left() + 1, Data::Statis::getStatisName(i).c_str());
+        if (i == 0) {
+            attroff(A_BOLD);
+            Color::reverseOff();
+        }
+    }
+    refresh();
+}
+
 void Graphic::Screens::updateCurrentScreen(int x) { 
     currentScreen = x;
     sketchScreen();
