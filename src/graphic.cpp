@@ -234,16 +234,16 @@ void Graphic::Screens::sketchGameScreen() {
 
     GameState::print();
     if (Data::Save::canLoadGame(GameState::getTypeGame())) {
-        Clear(GameState::getBoardHeight() / 2 - 2, GameState::getBoardWidth() / 2 - 30, 3, 60);
+        Clear(DEFAULT_HEIGHT - 2, DEFAULT_WIDTH - 30, 3, 60);
         
         attron(A_BOLD);
         
-        mvprintw(GameState::getBoardHeight() / 2 - 1, GameState::getBoardWidth() / 2 - 10, "Continue         New Game");
+        mvprintw(DEFAULT_HEIGHT - 1, DEFAULT_WIDTH - 10, "Continue         New Game");
         
             //Graphic::Screens::sketchStatisPVPScreen();
         Color::reverseOn();
-        mvaddch(GameState::getBoardHeight() / 2 - 1, GameState::getBoardWidth() / 2 - 10, 'C');
-        mvaddch(GameState::getBoardHeight() / 2 - 1, GameState::getBoardWidth() / 2 - 10 + 17, 'N');
+        mvaddch(DEFAULT_HEIGHT - 1, DEFAULT_WIDTH - 10, 'C');
+        mvaddch(DEFAULT_HEIGHT - 1, DEFAULT_WIDTH - 10 + 17, 'N');
         Color::reverseOff();
 
         attroff(A_BOLD);

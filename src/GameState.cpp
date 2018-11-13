@@ -38,7 +38,7 @@ void GameState::PlayerState::doMove(int x, int y) {
 
     attron(A_BOLD);
     Graphic::Color::reverseColorOn(color);
-    mvaddch(x, y, chess);
+    //mvaddch(x, y, chess);
     Graphic::Color::reverseColorOff(color);
     attroff(A_BOLD);
 }
@@ -121,6 +121,8 @@ void GameState::setStateCol(int x) { n = x; }
 void GameState::setStateAt(int x, int y, int v) { state[x][y] = v; }
 
 void GameState::setBoardSize(int x, int y) {
+    m = x; n = y;
+    currentPtrPosition = {playWindow.top() + 1 + m - m % 2, playWindow.left() + 1 + n - n % 2};
     playWindow.set(DEFAULT_HEIGHT - x + 1, DEFAULT_WIDTH - y + 1, (x << 1) + 1, (y << 1) + 1);
 }
 
@@ -141,8 +143,11 @@ int GameState::getPtrOx() { return currentPtrPosition.first / 2; }
 int GameState::getPtrOy() { return currentPtrPosition.second / 2; }
 
 void GameState::print() {
+    Graphic::Screens::Clear(1, 1, (DEFAULT_HEIGHT << 1) + 1, (DEFAULT_WIDTH << 1) + 1);
+    
     rectangle ss; ss.set(1, 1, (DEFAULT_HEIGHT << 1) + 1, (DEFAULT_WIDTH << 1) + 1);
     ss.drawEdges();
+    
     playWindow.drawTable();
     player[0].printProfile();
 
@@ -306,39 +311,39 @@ void GameState::updateData() {
         player[0].isDraw();
         player[1].isDraw();
     }
-    Graphic::Screens::Clear(playWindow.height() / 2 - 2, playWindow.width() / 2 - 20, 3, 40);
+    Graphic::Screens::Clear(DEFAULT_HEIGHT - 2, DEFAULT_WIDTH - 20, 3, 40);
     attron(A_BOLD | A_BLINK);
     if (type == PVP_SCREEN) {
         if (winner != -1)
-            mvprintw(playWindow.height() / 2 - 1, playWindow.width() / 2 - 18, "%s WIN! PRESS R TO REPLAY!", player[winner - 1].getName().c_str());
+            mvprintw(DEFAULT_HEIGHT - 1, DEFAULT_WIDTH - 18, "%s WIN! PRESS R TO REPLAY!", player[winner - 1].getName().c_str());
         else
-            mvprintw(playWindow.height() / 2 - 1, playWindow.width() / 2 - 12, "DRAW! PRESS R TO REPLAY!");
+            mvprintw(DEFAULT_HEIGHT - 1, DEFAULT_WIDTH - 12, "DRAW! PRESS R TO REPLAY!");
     } else {
         if (winner == 1)
-            mvprintw(playWindow.height() / 2 - 1, playWindow.width() / 2 - 15, "YOU WIN! PRESS R TO REPLAY!");
+            mvprintw(DEFAULT_HEIGHT - 1, DEFAULT_WIDTH - 15, "YOU WIN! PRESS R TO REPLAY!");
         else if (winner != -1)
-            mvprintw(playWindow.height() / 2 - 1, playWindow.width() / 2 - 15, "YOU LOSE! PRESS R TO REPLAY!");
+            mvprintw(DEFAULT_HEIGHT - 1, DEFAULT_WIDTH - 15, "YOU LOSE! PRESS R TO REPLAY!");
         else {
-            mvprintw(playWindow.height() / 2 - 1, playWindow.width() / 2 - 12, "DRAW! PRESS R TO REPLAY!");
+            mvprintw(DEFAULT_HEIGHT - 1, DEFAULT_WIDTH - 12, "DRAW! PRESS R TO REPLAY!");
         }
     }
     attroff(A_BOLD | A_BLINK);   
 }
 
 void GameState::backToMainScreen() {
-    Graphic::Screens::Clear(playWindow.height() / 2 - 2, playWindow.width() / 2 - 30, 3, 60);
+    Graphic::Screens::Clear(DEFAULT_HEIGHT - 2, DEFAULT_WIDTH - 30, 3, 60);
     
     attron(A_BOLD);
     
-    mvprintw(playWindow.height() / 2 - 1, playWindow.width() / 2 - 15, "Continue         Save         Back");
+    mvprintw(DEFAULT_HEIGHT - 1, DEFAULT_WIDTH - 15, "Continue         Save         Back");
     
     Graphic::Color::reverseOn();
     
-    mvaddch(playWindow.height() / 2 - 1, playWindow.width() / 2 - 15, 'C');
+    mvaddch(DEFAULT_HEIGHT - 1, DEFAULT_WIDTH - 15, 'C');
     
-    mvaddch(playWindow.height() / 2 - 1, playWindow.width() / 2 - 15 + 17, 'S');
+    mvaddch(DEFAULT_HEIGHT - 1, DEFAULT_WIDTH - 15 + 17, 'S');
     
-    mvaddch(playWindow.height() / 2 - 1, playWindow.width() / 2 - 15 + 30, 'B');
+    mvaddch(DEFAULT_HEIGHT - 1, DEFAULT_WIDTH - 15 + 30, 'B');
     
     Graphic::Color::reverseOff();
     

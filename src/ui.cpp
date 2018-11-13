@@ -178,6 +178,7 @@ void Ui::Controler::enterKeyProcess() {
                 }
                 if (Input::is_Z_Key()) {
                     Graphic::Screens::updateCurrentScreen(MAIN_SCREEN);
+                    //GameState::reset(tre)
                     break;
                 }
             }
@@ -263,7 +264,9 @@ void Ui::Controler::backSpaceKeyProcess() {
             }
             if (Input::is_S_Key()) {
                 Data::Save::savedGame(true);
+                
                 GameState::reset(true);
+                
                 Graphic::Screens::updateCurrentScreen(MAIN_SCREEN);
                 break;
             }
@@ -385,20 +388,23 @@ void Ui::Controler::sizeControl() {
             if (ptr == 0) {
                 mvprintw(Graphic::Screens::screens[OPTION_SCREEN].top() + 3, Graphic::Screens::screens[OPTION_SCREEN].left() + 1, "Height: %d", GameState::getBoardHeight() / 2);
 
+                ptr = (ptr + 1) % 2;
+
                 attron(A_BOLD); Graphic::Color::reverseOn();
-                mvprintw(Graphic::Screens::screens[OPTION_SCREEN].top() + 3, Graphic::Screens::screens[OPTION_SCREEN].left() + 1, "Width: %d", GameState::getBoardWidth() / 2);
+                mvprintw(Graphic::Screens::screens[OPTION_SCREEN].top() + 4, Graphic::Screens::screens[OPTION_SCREEN].left() + 1, "Width:  %d", GameState::getBoardWidth() / 2);
                 attroff(A_BOLD); Graphic::Color::reverseOff();
             } else {
                 attron(A_BOLD); Graphic::Color::reverseOn();
                 mvprintw(Graphic::Screens::screens[OPTION_SCREEN].top() + 3, Graphic::Screens::screens[OPTION_SCREEN].left() + 1, "Height: %d", GameState::getBoardHeight() / 2);
                 attroff(A_BOLD); Graphic::Color::reverseOff();
                 
-                mvprintw(Graphic::Screens::screens[OPTION_SCREEN].top() + 3, Graphic::Screens::screens[OPTION_SCREEN].left() + 1, "Width: %d", GameState::getBoardWidth() / 2);
+                ptr = (ptr + 1) % 2;
+
+                mvprintw(Graphic::Screens::screens[OPTION_SCREEN].top() + 4, Graphic::Screens::screens[OPTION_SCREEN].left() + 1, "Width:  %d", GameState::getBoardWidth() / 2);
             }
-            ptr = (ptr + 1) % 2;
         }
         if (Input::isDigit()) {
-            int x = Input::getInput();
+            int x = Input::getInput() - '0';
             while (true) {
                 Input::read();
                 if (Input::is_B_Key()) {
@@ -409,16 +415,15 @@ void Ui::Controler::sizeControl() {
                     x = x * 10 + Input::getInput() - '0';
                 }
                 if (Input::isEnterKey()) {
+                    attron(A_BOLD); Graphic::Color::reverseOn();
                     if (ptr == 0) {
                         mvprintw(Graphic::Screens::screens[OPTION_SCREEN].top() + 3, Graphic::Screens::screens[OPTION_SCREEN].left() + 1, "Height: %d", x);
-                        GameState::setBoardSize(x * 2 + 1, GameState::getBoardWidth());
+                        GameState::setBoardSize(x, GameState::getBoardWidth() / 2);
                     } else {
                         mvprintw(Graphic::Screens::screens[OPTION_SCREEN].top() + 4, Graphic::Screens::screens[OPTION_SCREEN].left() + 1, "Width:  %d", x);
-                        GameState::setBoardSize(GameState::getBoardHeight(), 2 * x + 1);
+                        GameState::setBoardSize(GameState::getBoardHeight() / 2, x);
                     }
-                    break;
-                }
-                if (Input::isKeyUp() || Input::isKeyDown()) {
+                    attroff(A_BOLD); Graphic::Color::reverseOff();
                     break;
                 }
             }
@@ -439,49 +444,44 @@ void Ui::Controler::iconControl() {
             Graphic::Screens::Clear(Graphic::Screens::screens[OPTION_SCREEN].top(), Graphic::Screens::screens[OPTION_SCREEN].left(), Graphic::Screens::screens[OPTION_SCREEN].height(), Graphic::Screens::screens[OPTION_SCREEN].width());
             Graphic::Screens::screens[OPTION_SCREEN].drawEdges();
 
+            if (ptr == 1) {
+                attron(A_BOLD); Graphic::Color::reverseOn();
+                mvprintw(Graphic::Screens::screens[OPTION_SCREEN].top() + 3, Graphic::Screens::screens[OPTION_SCREEN].left() + 1, "First Player:  %c", GameState::player[0].getIcon());
+                attroff(A_BOLD); Graphic::Color::reverseOff();
+
+                ptr = (ptr + 1) % 2;
+                
+                mvprintw(Graphic::Screens::screens[OPTION_SCREEN].top() + 4, Graphic::Screens::screens[OPTION_SCREEN].left() + 1, "Second Player: %c", GameState::player[1].getIcon());
+            } else {
+                mvprintw(Graphic::Screens::screens[OPTION_SCREEN].top() + 3, Graphic::Screens::screens[OPTION_SCREEN].left() + 1, "First Player:  %c", GameState::player[0].getIcon());
+
+                ptr = (ptr + 1) % 2;
+
+                attron(A_BOLD); Graphic::Color::reverseOn();
+                mvprintw(Graphic::Screens::screens[OPTION_SCREEN].top() + 4, Graphic::Screens::screens[OPTION_SCREEN].left() + 1, "Second Player: %c", GameState::player[1].getIcon());
+                attroff(A_BOLD); Graphic::Color::reverseOff();
+            }
+        }
+        refresh();
+        if (Input::isDigit() || Input::isAlpha()) {
+            int in = Input::getInput();
+            GameState::player[ptr].setChess(in);
             if (ptr == 0) {
+                Graphic::Screens::Clear(Graphic::Screens::screens[OPTION_SCREEN].top() + 1, Graphic::Screens::screens[OPTION_SCREEN].left() + 1, Graphic::Screens::screens[OPTION_SCREEN].height() - 2, Graphic::Screens::screens[OPTION_SCREEN].width() - 2);
+
                 attron(A_BOLD); Graphic::Color::reverseOn();
                 mvprintw(Graphic::Screens::screens[OPTION_SCREEN].top() + 3, Graphic::Screens::screens[OPTION_SCREEN].left() + 1, "First Player:  %c", GameState::player[0].getIcon());
                 attroff(A_BOLD); Graphic::Color::reverseOff();
                 
                 mvprintw(Graphic::Screens::screens[OPTION_SCREEN].top() + 4, Graphic::Screens::screens[OPTION_SCREEN].left() + 1, "Second Player: %c", GameState::player[1].getIcon());
             } else {
+                Graphic::Screens::Clear(Graphic::Screens::screens[OPTION_SCREEN].top() + 1, Graphic::Screens::screens[OPTION_SCREEN].left() + 1, Graphic::Screens::screens[OPTION_SCREEN].height() - 2, Graphic::Screens::screens[OPTION_SCREEN].width() - 2);
+
                 mvprintw(Graphic::Screens::screens[OPTION_SCREEN].top() + 3, Graphic::Screens::screens[OPTION_SCREEN].left() + 1, "First Player:  %c", GameState::player[0].getIcon());
 
                 attron(A_BOLD); Graphic::Color::reverseOn();
                 mvprintw(Graphic::Screens::screens[OPTION_SCREEN].top() + 4, Graphic::Screens::screens[OPTION_SCREEN].left() + 1, "Second Player: %c", GameState::player[1].getIcon());
                 attroff(A_BOLD); Graphic::Color::reverseOff();
-            }
-            ptr = (ptr + 1) % 2;
-        }
-        if (!Input::is_B_Key() && (Input::isDigit || Input::isAlpha())) {
-            while (true) {
-                Input::read();
-                if (Input::is_B_Key()) {
-                    Graphic::Screens::sketchOptionScreen();
-                    break;
-                }
-                if (Input::isEnterKey()) {
-                    if (ptr == 0) {
-                        GameState::player[0].setChess(Input::getInput());
-
-                        attron(A_BOLD); Graphic::Color::reverseOn();
-                        mvprintw(Graphic::Screens::screens[OPTION_SCREEN].top() + 3, Graphic::Screens::screens[OPTION_SCREEN].left() + 1, "First Player:  %c", GameState::player[0].getIcon());
-                        attroff(A_BOLD); Graphic::Color::reverseOff();
-                        
-                        mvprintw(Graphic::Screens::screens[OPTION_SCREEN].top() + 4, Graphic::Screens::screens[OPTION_SCREEN].left() + 1, "Second Player: %c", GameState::player[1].getIcon());
-                    } else {
-                        GameState::player[1].setChess(Input::getInput());
-
-                        mvprintw(Graphic::Screens::screens[OPTION_SCREEN].top() + 3, Graphic::Screens::screens[OPTION_SCREEN].left() + 1, "First Player:  %c", GameState::player[0].getIcon());
-
-                        attron(A_BOLD); Graphic::Color::reverseOn();
-                        mvprintw(Graphic::Screens::screens[OPTION_SCREEN].top() + 4, Graphic::Screens::screens[OPTION_SCREEN].left() + 1, "Second Player: %c", GameState::player[1].getIcon());
-                        attroff(A_BOLD); Graphic::Color::reverseOff();
-                    }
-                    break;
-                }
-                refresh();
             }
         }
         refresh();
