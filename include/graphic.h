@@ -116,6 +116,8 @@ namespace Graphic {
         extern rectangle subscreens[5];
         extern int currentScreen;
         extern int currentPtr[2];
+
+        extern int optionState[3][3];
         
         void init();
         void load();

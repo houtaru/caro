@@ -47,7 +47,7 @@ void Ui::Controler::process() {
     
     if (Ui::Input::is_Z_Key()) backSpaceKeyProcess();
 
-    if (Graphic::Screens::getCurrentScreen() == STATISTIC_SCREEN && Input::is_B_Key()) {
+    if ((Graphic::Screens::getCurrentScreen() == STATISTIC_SCREEN || Graphic::Screens::getCurrentScreen() == OPTION_SCREEN) && Input::is_B_Key()) {
         Graphic::Screens::updateCurrentScreen(MAIN_SCREEN);
     }
     if (Ui::Input::is_U_Key()) undoProcess();
@@ -218,9 +218,9 @@ void Ui::Controler::enterKeyProcess() {
             Graphic::Screens::sketchStatisPVCScreen();
             Ui::Controler::PvCStatisControl();
         }
-    }
+    } else
     if (Graphic::Screens::getCurrentScreen() == OPTION_SCREEN) {
-        //Graphic::Screens::sketchOptionScreen();
+        Graphic::Screens::sketchOptionScreen();
     }
     //Remember to add user interface to option screen function 
 }

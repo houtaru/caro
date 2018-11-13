@@ -112,8 +112,9 @@ void Machine::doMove() {
 
     state[p.first][p.second] = 2;
     
+    beep();
+    
     Graphic::Color::colorOn(PLAYER_TWO_COLOR);
     mvaddch(x, y, player[1].getIcon());
     Graphic::Color::colorOff(PLAYER_TWO_COLOR);
-
 }
